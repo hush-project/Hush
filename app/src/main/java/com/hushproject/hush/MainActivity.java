@@ -17,6 +17,10 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+    //create buttons for cards
+    private Button editButton;
+    private Button deleteButton;
+
     //Create RecyclerView to display our locations.
     private RecyclerView locationView;
     private RecyclerView.Adapter locationAdapter;
@@ -73,6 +77,10 @@ public class MainActivity extends AppCompatActivity {
         locationView.setAdapter(locationAdapter);
         //set locationView's layout manager to a linear layout manager.
         locationView.setLayoutManager(new LinearLayoutManager(this));
+
+        //bind buttons to appropriate elements.
+        editButton = findViewById(R.id.editBtn);
+        deleteButton = findViewById(R.id.delBtn);
     }
 
     public void add(View view) {
@@ -82,11 +90,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void edit(View view) {
-        Log.d("editbutton","was pressed");
+
+        Log.d("Edit", "was pressed");
     }
 
     public void delete(View view) {
 
-        Log.d("deletebutton", "was pressed");
+        Log.d("delete", "was pressed");
     }
 }

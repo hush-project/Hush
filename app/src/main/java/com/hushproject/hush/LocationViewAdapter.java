@@ -33,7 +33,7 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int i) {
         //create a UserLocations object to represent the object we're currently looking at.
-        UserLocations currentLoc = locations.get(i);
+        final UserLocations currentLoc = locations.get(i);
 
         //set name of our currentLoc to our name textview.
         viewHolder.locTitle.setText(currentLoc.getLocationName());
@@ -51,14 +51,16 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         //create TextViews for cards.
-        TextView locTitle;
-        TextView locAddress;
+        private TextView locTitle;
+        private TextView locAddress;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+
             //bind our textviews to the appropriate elements.
             locTitle = itemView.findViewById(R.id.locTitle);
             locAddress = itemView.findViewById(R.id.locAddress);
+
         }
     }
 
