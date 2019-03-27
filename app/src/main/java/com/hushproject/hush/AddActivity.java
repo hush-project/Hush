@@ -132,12 +132,13 @@ public class AddActivity extends AppCompatActivity {
         This method is for setting the address variable (so it can be saved to file)
         after a location is chosen in the map activity.
          */
-        address = "dkfasdhf";
     }
 
     public void saveLoc(View view) {
         //set name to whatever the text in our EditText field is.
         name = locName.getText().toString();
+
+        address = "Test";
 
         //create a new UserLocations object to store the information gathered by the activity.
         UserLocations newLocation = new UserLocations(name, address, ringVolume,
