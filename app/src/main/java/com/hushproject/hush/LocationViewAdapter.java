@@ -54,8 +54,10 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
     //end of required methods for LocationViewAdapter.
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        //we need context to access sharedprefs.
         private Context context;
 
+        //SharedPreference declarations.
         private SharedPreferences locPrefs;
         private SharedPreferences.Editor editor;
 
@@ -69,8 +71,10 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
 
         public ViewHolder(@NonNull final View itemView) {
             super(itemView);
+            //set context to itemView.
             context = itemView.getContext();
 
+            //get sharedpreferences and set up our editor.
             locPrefs = context.getSharedPreferences("LocPrefs", Context.MODE_PRIVATE);
             editor = locPrefs.edit();
 
@@ -78,24 +82,32 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
             locTitle = itemView.findViewById(R.id.locTitle);
             locAddress = itemView.findViewById(R.id.locAddress);
 
+            //bind buttons to appropriate elements.
             editButton = itemView.findViewById(R.id.editBtn);
             deleteButton = itemView.findViewById(R.id.delBtn);
 
+            //onClick listener for our edit button.
             editButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    //open Edit activity.
+                    //Need to pass sharedpreference key to our editactivity somehow.
                     Intent openEdit = new Intent(context, EditActivity.class);
                     context.startActivity(openEdit);
                     Log.d("Edit", "was clicked ");
                 }
             });
 
+            //onClick listener for our delete button.
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    //Get locTitle since we're using names as pref keys.
                     String cardKey = locTitle.getText().toString();
+                    //remove card from recyclerview.
                     locations.remove(getAdapterPosition());
                     notifyItemRemoved(getAdapterPosition());
+                    //use cardKey to remove the sharedpreferences from prefs file.
                     editor.remove(cardKey);
                     editor.apply();
                     Log.d("Delete", "was clicked " + locTitle.getText());
