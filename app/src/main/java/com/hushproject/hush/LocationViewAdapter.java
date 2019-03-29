@@ -90,11 +90,13 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
             editButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    //Get locTitle since we're using names as pref keys.
+                    String cardKey = locTitle.getText().toString();
                     //open Edit activity.
-                    //Need to pass sharedpreference key to our editactivity somehow.
                     Intent openEdit = new Intent(context, EditActivity.class);
+                    //send information to our edit activity.
+                    openEdit.putExtra("cardKey", cardKey);
                     context.startActivity(openEdit);
-                    Log.d("Edit", "was clicked ");
                 }
             });
 
@@ -110,7 +112,6 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
                     //use cardKey to remove the sharedpreferences from prefs file.
                     editor.remove(cardKey);
                     editor.apply();
-                    Log.d("Delete", "was clicked " + locTitle.getText());
                 }
             });
         }
