@@ -28,6 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_weight=".5"
             android:onClick="setAddress"
+            android:hint="Tap To Set Address"
             android:paddingLeft="2dp"
             android:textSize="18sp" />
 

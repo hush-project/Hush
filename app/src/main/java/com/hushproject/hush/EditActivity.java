@@ -162,6 +162,9 @@ public class EditActivity extends AppCompatActivity {
         This method is for setting the address variable (so it can be saved to file)
         after a location is chosen in the map activity.
          */
+        //open our map activity.
+        Intent openMap = new Intent(this, MapActivity.class);
+        startActivity(openMap);
     }
 
     public void saveLoc(View view) {
