@@ -1,14 +1,15 @@
 package com.hushproject.hush;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 
 import com.google.gson.Gson;
 
@@ -17,18 +18,25 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    //Create RecyclerView to display our locations.
+    //Recyclerview
     private RecyclerView locationView;
     private RecyclerView.Adapter locationAdapter;
 
-    //Create a SharedPreferences object.
+    /*
+    SharedPreference object for user locations. We don't need an editor because this activity
+    doesn't edit location preferences, it only retrieves them.
+     */
     private SharedPreferences locPrefs;
-    private SharedPreferences.Editor editor;
 
-    //Create an ArrayList to store UserLocations.
+    //ArrayList to store UserLocations objects.
     private ArrayList<UserLocations> locations;
 
-    //create Gson object.
+    //ArrayList to store location keys.
+    private ArrayList<String> locationKeys;
+
+    //ArrayList to store geofences.
+
+    //Gson object.
     Gson gson = new Gson();
 
     @Override
@@ -36,15 +44,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //create SharedPreferences file
+        //create SharedPreferences files
         locPrefs = getSharedPreferences("LocPrefs", MODE_PRIVATE);
-        editor = locPrefs.edit();
 
-        //ArrayList for storing UserLocation objects.
-        ArrayList<UserLocations> locations = new ArrayList<>();
+        //ArrayList for storing UserLocations.
+        locations = new ArrayList<>();
 
         //ArrayList for storing location keys.
-        ArrayList<String> locationKeys = new ArrayList<>();
+        locationKeys = new ArrayList<>();
 
         //get all SharedPreferences keys and store them in a list.
         Map<String, ?> keys = locPrefs.getAll();
