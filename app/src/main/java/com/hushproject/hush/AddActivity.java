@@ -13,11 +13,9 @@ import com.google.gson.Gson;
 
 public class AddActivity extends AppCompatActivity {
 
-    //create EditText and TextView objects.
     private EditText locName;
     private TextView locAddress;
 
-    //create private member variables for use in storing/writing to file.
     private String name = "";
     private String address = "";
     private int ringVolume = 0;
@@ -25,10 +23,10 @@ public class AddActivity extends AppCompatActivity {
     private int notiVolume = 0;
     private int systVolume = 0;
 
-    //create Gson object.
+    //Gson object.
     Gson gson = new Gson();
 
-    //create SharedPreferences editor.
+    //SharedPreferences editor.
     SharedPreferences.Editor editor;
 
     @Override
@@ -132,6 +130,10 @@ public class AddActivity extends AppCompatActivity {
         This method is for setting the address variable (so it can be saved to file)
         after a location is chosen in the map activity.
          */
+        //open our map activity.
+        Intent openMap = new Intent(this, MapActivity.class);
+        startActivity(openMap);
+
     }
 
     public void saveLoc(View view) {

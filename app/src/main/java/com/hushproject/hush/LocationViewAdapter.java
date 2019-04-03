@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapter.ViewHolder> {
 
-    //create an ArrayList of UserLocations to display on our RecyclerList.
+    //ArrayList of UserLocation objects.
     private ArrayList<UserLocations> locations;
 
     //default constructor
@@ -54,18 +54,19 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
     //end of required methods for LocationViewAdapter.
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        //we need context to access sharedprefs.
+        //Context to access SharedPreferences.
         private Context context;
 
         //SharedPreference declarations.
         private SharedPreferences locPrefs;
         private SharedPreferences.Editor editor;
 
-        //Button declarations
+        //Button declarations.
         private Button editButton;
         private Button deleteButton;
+        private Button volTestButton;
 
-        //create TextViews for cards.
+        //TextView declarations.
         private TextView locTitle;
         private TextView locAddress;
 
@@ -78,13 +79,14 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
             locPrefs = context.getSharedPreferences("LocPrefs", Context.MODE_PRIVATE);
             editor = locPrefs.edit();
 
-            //bind our textviews to the appropriate elements.
+            //bind TextViews to the appropriate elements.
             locTitle = itemView.findViewById(R.id.locTitle);
             locAddress = itemView.findViewById(R.id.locAddress);
 
             //bind buttons to appropriate elements.
             editButton = itemView.findViewById(R.id.editBtn);
             deleteButton = itemView.findViewById(R.id.delBtn);
+            volTestButton = itemView.findViewById(R.id.volTest);
 
             //onClick listener for our edit button.
             editButton.setOnClickListener(new View.OnClickListener() {
@@ -112,6 +114,24 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
                     //use cardKey to remove the sharedpreferences from prefs file.
                     editor.remove(cardKey);
                     editor.apply();
+                }
+            });
+
+            //onClick listener for volTest button.
+            volTestButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //retrieve volume settings saved under this key and set device volume to these.
+                    UserLocations getVolumes = locations.get(getAdapterPosition());
+                    //get volumes for this card.
+                    int volRingTest = getVolumes.getLocRingVol();
+                    int volMediTest = getVolumes.getLocMediVol();
+                    int volNotiTest = getVolumes.getLocNotiVol();
+                    int volSystTest = getVolumes.getLocSystVol();
+                    Log.d("volRingTest", ":" + volRingTest);
+                    Log.d("volMediTest", ":" + volMediTest);
+                    Log.d("volNotiTest", ":" + volNotiTest);
+                    Log.d("volSystTest", ":" + volSystTest);
                 }
             });
         }

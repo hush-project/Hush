@@ -51,11 +51,15 @@ public class EditActivity extends AppCompatActivity {
 
         locName.setText(name);
 
+
         //Create an object to convert our gson string back into.
 
         String locToEdit = locPrefs.getString(name, "");
 
         UserLocations editLocation = gson.fromJson(locToEdit, UserLocations.class);
+
+        //temporary value for address textview to test it.
+        locAddress.setText(editLocation.getLocationAddress());
 
         /*
         Here we initialize our member variables so our user's volume settings don't get set back to
@@ -158,6 +162,9 @@ public class EditActivity extends AppCompatActivity {
         This method is for setting the address variable (so it can be saved to file)
         after a location is chosen in the map activity.
          */
+        //open our map activity.
+        Intent openMap = new Intent(this, MapActivity.class);
+        startActivity(openMap);
     }
 
     public void saveLoc(View view) {

@@ -18,22 +18,26 @@
             android:layout_height="wrap_content"
             android:layout_weight=".5"
             android:ems="10"
-            android:hint="Location Name"
-            android:inputType="textPersonName" />
+            android:paddingLeft="2dp"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight=".5"
             android:onClick="setAddress"
-            android:layout_weight=".5" />
+            android:paddingLeft="2dp"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/ringText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight=".5"
-            android:text="Ringtone" />
+            android:paddingLeft="2dp"
+            android:text="Ringtone"
+            android:textSize="18sp" />
 
         <SeekBar
             android:id="@+id/ringVol"
@@ -46,7 +50,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight=".5"
-            android:text="Media" />
+            android:paddingLeft="2dp"
+            android:text="Media"
+            android:textSize="18sp" />
 
         <SeekBar
             android:id="@+id/mediVol"
@@ -59,7 +65,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight=".5"
-            android:text="Notifications" />
+            android:paddingLeft="2dp"
+            android:text="Notifications"
+            android:textSize="18sp" />
 
         <SeekBar
             android:id="@+id/notiVol"
@@ -72,7 +80,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight=".5"
-            android:text="System" />
+            android:paddingLeft="2dp"
+            android:text="System"
+            android:textSize="18sp" />
 
         <SeekBar
             android:id="@+id/systVol"
