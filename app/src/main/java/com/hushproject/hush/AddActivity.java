@@ -23,10 +23,8 @@ public class AddActivity extends AppCompatActivity {
     private int notiVolume = 0;
     private int systVolume = 0;
 
-    //Gson object.
     Gson gson = new Gson();
 
-    //SharedPreferences editor.
     SharedPreferences.Editor editor;
 
     @Override
@@ -34,12 +32,11 @@ public class AddActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
 
-        //Create a SharedPreferences object and get our shared preferences.
+        //Get SharedPreferences.
         SharedPreferences locPrefs = getSharedPreferences("LocPrefs", MainActivity.MODE_PRIVATE);
-        //set up an editor for SharedPreferences so we can save our data.
+        //SharedPreferences editor
         editor = locPrefs.edit();
 
-        //Create & attach textfields.
         locName = findViewById(R.id.locationName);
         locAddress = findViewById(R.id.address);
 
@@ -130,30 +127,28 @@ public class AddActivity extends AppCompatActivity {
         This method is for setting the address variable (so it can be saved to file)
         after a location is chosen in the map activity.
          */
-        //open our map activity.
+
         Intent openMap = new Intent(this, MapActivity.class);
         startActivity(openMap);
 
     }
 
     public void saveLoc(View view) {
-        //set name to whatever the text in our EditText field is.
         name = locName.getText().toString();
 
         address = "Test";
 
-        //create a new UserLocations object to store the information gathered by the activity.
+        //Store current values as a UserLocations object
         UserLocations newLocation = new UserLocations(name, address, ringVolume,
                 mediVolume, notiVolume, systVolume);
 
-        //turn newLocation into a gson string
+        //Convert to json string.
         String loc = gson.toJson(newLocation);
 
-        //commit gson string to SharedPreferences using location name as the key.
+        //Save json string to preferences.
         editor.putString(name, loc);
         editor.commit();
 
-        //return to MainActivity
         Intent returnToMain = new Intent(this, MainActivity.class);
         //kill activity to save memory.
         returnToMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

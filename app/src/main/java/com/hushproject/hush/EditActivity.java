@@ -13,11 +13,10 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 
 public class EditActivity extends AppCompatActivity {
-    //create EditText and TextView objects.
+
     private TextView locName;
     private TextView locAddress;
 
-    //create private member variables for use in storing/writing to file.
     private String name = "";
     private String address = "";
     private int ringVolume = 0;
@@ -25,23 +24,22 @@ public class EditActivity extends AppCompatActivity {
     private int notiVolume = 0;
     private int systVolume = 0;
 
-    //create Gson object.
     Gson gson = new Gson();
 
-    //create SharedPreferences editor.
     SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
 
-        //Create & attach textfields.
+        //textfields.
         locName = findViewById(R.id.locationName);
         locAddress = findViewById(R.id.address);
 
-        //Create a SharedPreferences object and get our shared preferences.
+        //Get SharedPreferences
         SharedPreferences locPrefs = getSharedPreferences("LocPrefs", MainActivity.MODE_PRIVATE);
-        //set up an editor for SharedPreferences so we can save our data.
+        //preference editor.
         editor = locPrefs.edit();
 
         //Get the name of the profile and set our name variable equal to it.
@@ -52,19 +50,14 @@ public class EditActivity extends AppCompatActivity {
         locName.setText(name);
 
 
-        //Create an object to convert our gson string back into.
-
+        //Convert gson string to object.
         String locToEdit = locPrefs.getString(name, "");
-
         UserLocations editLocation = gson.fromJson(locToEdit, UserLocations.class);
 
-        //temporary value for address textview to test it.
+        //set location text.
         locAddress.setText(editLocation.getLocationAddress());
 
-        /*
-        Here we initialize our member variables so our user's volume settings don't get set back to
-        0 in the event they click save without altering the seekbar progress.
-         */
+       //get ringer values to prevent settings defaulting to 0 if none are changed.
         ringVolume = editLocation.getLocRingVol();
         mediVolume = editLocation.getLocMediVol();
         notiVolume = editLocation.getLocNotiVol();
@@ -162,30 +155,28 @@ public class EditActivity extends AppCompatActivity {
         This method is for setting the address variable (so it can be saved to file)
         after a location is chosen in the map activity.
          */
-        //open our map activity.
+
         Intent openMap = new Intent(this, MapActivity.class);
         startActivity(openMap);
     }
 
     public void saveLoc(View view) {
-        //set name to whatever the text in our EditText field is.
-
+        //Test string for address.
         address = "Test";
 
-        //create a new UserLocations object to store the information gathered by the activity.
+        //Store current values as a UserLocations object.
         UserLocations saveLocation = new UserLocations(name, address, ringVolume,
                 mediVolume, notiVolume, systVolume);
 
-        //turn newLocation into a gson string
+        //Convert to a json string.
         String loc = gson.toJson(saveLocation);
 
-        //commit gson string to SharedPreferences using location name as the key.
+        //Save json string to preferences.
         editor.putString(name, loc);
         editor.commit();
 
-        //return to MainActivity
         Intent returnToMain = new Intent(this, MainActivity.class);
-        //kill activity to save memory.
+        //Kill activity to save memory.
         returnToMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(returnToMain);
     }
