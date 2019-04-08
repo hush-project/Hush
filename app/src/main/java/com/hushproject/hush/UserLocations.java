@@ -2,7 +2,6 @@ package com.hushproject.hush;
 
 public class UserLocations {
 
-    //create private member variables.
     private String locationName = "";
     private String locationAddress = "";
     private int locRingVol = 0;
@@ -13,7 +12,6 @@ public class UserLocations {
     //constructor.
     public UserLocations(String name, String address, int ring, int medi, int noti, int syst) {
 
-       //set private member variables to whatever we feed in through the constructor.
        locationName = name;
        locationAddress = address;
        locRingVol = ring;

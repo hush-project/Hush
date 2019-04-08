@@ -16,7 +16,6 @@ import java.util.ArrayList;
 
 public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapter.ViewHolder> {
 
-    //ArrayList of UserLocation objects.
     private ArrayList<UserLocations> locations;
 
     //default constructor
@@ -24,11 +23,11 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
         locations = i;
     }
 
-    //required methods for our LocationViewAdapter.
+    //required methods for LocationViewAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        //inflate our RecycleView with cards containing the data from our list of saved locations.
+        //inflate RecyclerView with cards containing the data from our list of saved locations.
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_layout,
                 viewGroup, false);
         ViewHolder viewHolder = new ViewHolder(view);
@@ -37,18 +36,18 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        //create a UserLocations object to represent the object we're currently looking at.
+        //create a UserLocations object for current location.
         final UserLocations currentLoc = locations.get(i);
 
-        //set name of our currentLoc to our name textview.
+        //set name of currentLoc to name textview.
         viewHolder.locTitle.setText(currentLoc.getLocationName());
-        //set address from our currentLoc to our address textview.
+        //set address from currentLoc to address textview.
         viewHolder.locAddress.setText(currentLoc.getLocationAddress());
     }
 
     @Override
     public int getItemCount() {
-        //just returns the size of our locations ArrayList.
+        //just returns the size of the locations ArrayList.
         return locations.size();
     }
     //end of required methods for LocationViewAdapter.
@@ -57,16 +56,13 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
         //Context to access SharedPreferences.
         private Context context;
 
-        //SharedPreference declarations.
         private SharedPreferences locPrefs;
         private SharedPreferences.Editor editor;
 
-        //Button declarations.
         private Button editButton;
         private Button deleteButton;
         private Button volTestButton;
 
-        //TextView declarations.
         private TextView locTitle;
         private TextView locAddress;
 
@@ -75,15 +71,11 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
             //set context to itemView.
             context = itemView.getContext();
 
-            //get sharedpreferences and set up our editor.
             locPrefs = context.getSharedPreferences("LocPrefs", Context.MODE_PRIVATE);
             editor = locPrefs.edit();
 
-            //bind TextViews to the appropriate elements.
             locTitle = itemView.findViewById(R.id.locTitle);
             locAddress = itemView.findViewById(R.id.locAddress);
-
-            //bind buttons to appropriate elements.
             editButton = itemView.findViewById(R.id.editBtn);
             deleteButton = itemView.findViewById(R.id.delBtn);
             volTestButton = itemView.findViewById(R.id.volTest);
@@ -92,11 +84,11 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
             editButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //Get locTitle since we're using names as pref keys.
+                    //Get locTitle.
                     String cardKey = locTitle.getText().toString();
                     //open Edit activity.
                     Intent openEdit = new Intent(context, EditActivity.class);
-                    //send information to our edit activity.
+                    //send information to edit activity.
                     openEdit.putExtra("cardKey", cardKey);
                     context.startActivity(openEdit);
                 }
@@ -106,7 +98,7 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //Get locTitle since we're using names as pref keys.
+                    //Get locTitle.
                     String cardKey = locTitle.getText().toString();
                     //remove card from recyclerview.
                     locations.remove(getAdapterPosition());
