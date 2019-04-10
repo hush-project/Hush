@@ -52,7 +52,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
      * installed Google Play services and returned to the app.
      */
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
 
         // Here, thisActivity is the current activity
@@ -94,6 +94,15 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                         }
                     }
                 });
+
+        //Create an onClick listener for creating map markers.
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                mMap.clear();
+                mMap.addMarker(new MarkerOptions().position(latLng));
+            }
+        });
         //Create an onclick listener for a floating action button.
         FloatingActionButton addButton = findViewById(R.id.addGeofence);
         addButton.setOnClickListener(new View.OnClickListener() {
