@@ -1,7 +1,9 @@
 package com.hushproject.hush;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,7 +13,8 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 
-public class AddActivity extends AppCompatActivity {
+public class AddActivity extends AppCompatActivity
+{
 
     private EditText locName;
     private TextView locAddress;
@@ -23,14 +26,22 @@ public class AddActivity extends AppCompatActivity {
     private int notiVolume = 0;
     private int systVolume = 0;
 
+    AudioManager aManager;
+    Context context;
+
     Gson gson = new Gson();
 
     SharedPreferences.Editor editor;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
+
+        //AudioManager and Context
+        aManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        context = getApplicationContext();
 
         //Get SharedPreferences.
         SharedPreferences locPrefs = getSharedPreferences("LocPrefs", MainActivity.MODE_PRIVATE);
@@ -42,16 +53,19 @@ public class AddActivity extends AppCompatActivity {
 
         //seekbars
         final SeekBar ringVol = findViewById(R.id.ringVol);
-        ringVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        ringVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+        {
             int barVal = 0;
 
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
                 barVal = progress;
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
 
             }
 
@@ -59,19 +73,24 @@ public class AddActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 ringVolume = barVal;
             }
+
+
         });
 
         final SeekBar mediVol = findViewById(R.id.mediVol);
-        mediVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mediVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+        {
             int barVal = 0;
 
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
                 barVal = progress;
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
 
             }
 
@@ -82,16 +101,19 @@ public class AddActivity extends AppCompatActivity {
         });
 
         final SeekBar notiVol = findViewById(R.id.notiVol);
-        notiVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        notiVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+        {
             int barVal = 0;
 
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
                 barVal = progress;
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
 
             }
 
@@ -102,16 +124,19 @@ public class AddActivity extends AppCompatActivity {
         });
 
         final SeekBar systVol = findViewById(R.id.systVol);
-        systVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        systVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+        {
             int barVal = 0;
 
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
                 barVal = progress;
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
 
             }
 
@@ -122,7 +147,8 @@ public class AddActivity extends AppCompatActivity {
         });
     }
 
-    public void setAddress(View view) {
+    public void setAddress(View view)
+    {
         /*
         This method is for setting the address variable (so it can be saved to file)
         after a location is chosen in the map activity.
@@ -133,7 +159,8 @@ public class AddActivity extends AppCompatActivity {
 
     }
 
-    public void saveLoc(View view) {
+    public void saveLoc(View view)
+    {
         name = locName.getText().toString();
 
         address = "Test";
