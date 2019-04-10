@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Hush</string>
     <string name="title_activity_map">MapActivity</string>
+    <string name="title_activity_map_add">Map</string>
 </resources>

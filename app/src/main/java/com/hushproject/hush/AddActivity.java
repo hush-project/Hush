@@ -153,9 +153,8 @@ public class AddActivity extends AppCompatActivity
         This method is for setting the address variable (so it can be saved to file)
         after a location is chosen in the map activity.
          */
-
-        Intent openMap = new Intent(this, MapActivity.class);
-        startActivity(openMap);
+        Intent openMapAdd = new Intent(this, MapAddActivity.class);
+        startActivity(openMapAdd);
 
     }
 

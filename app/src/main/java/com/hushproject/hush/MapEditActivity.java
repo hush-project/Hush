@@ -1,8 +1,8 @@
 package com.hushproject.hush;
 
 import android.Manifest;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Camera;
 import android.location.Location;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -10,37 +10,59 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.gson.Gson;
 
-public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
+import java.util.ArrayList;
+
+public class MapEditActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private LatLng lastLatLng;
     private FusedLocationProviderClient fusedLocationClient;
     private static int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    private SharedPreferences locPrefs;
+    private SharedPreferences.Editor editor;
+    private String name = "";
+    private Gson gson = new Gson();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
+        setContentView(R.layout.activity_mapedit);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        //Get SharedPreferences
+        SharedPreferences locPrefs = getSharedPreferences("LocPrefs", MainActivity.MODE_PRIVATE);
+        //preference editor.
+        editor = locPrefs.edit();
+
+        //Get the name of the profile and set our name variable equal to it.
+        Bundle openMapEdit = getIntent().getExtras();
+        //name functions as key for retrieving & saving sharedpreferences.
+        name = openMapEdit.getString("locKey");
+        //check to see if we are getting the key we need to retrieve associated preferences.
+        Log.d("Name is", ""  + name);
+        String currentMap = locPrefs.getString(name,"");
+        UserLocations current = gson.fromJson(currentMap, UserLocations.class);
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     }
-
 
     /**
      * Manipulates the map once available.
@@ -54,6 +76,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
+        FloatingActionButton addButton = findViewById(R.id.addGeofence);
+        final EditText addressField = findViewById(R.id.editAddress);
 
         // Here, thisActivity is the current activity
         if (ContextCompat.checkSelfPermission(this,
@@ -95,20 +119,27 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                     }
                 });
 
-        //Create an onClick listener for creating map markers.
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                mMap.clear();
-                mMap.addMarker(new MarkerOptions().position(latLng));
-            }
-        });
-        //Create an onclick listener for a floating action button.
-        FloatingActionButton addButton = findViewById(R.id.addGeofence);
+        //onClick listener for add geofence FAB.
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("Add Geofence", "was clicked");
+                addressField.setVisibility(View.VISIBLE);
+            }
+        });
+
+        //get text of addressField and hide it.
+        addressField.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId == EditorInfo.IME_ACTION_DONE) {
+                    Log.d("Address: ", "" + addressField.getText().toString());
+                    addressField.performClick();
+                    addressField.setVisibility(View.GONE);
+                    addressField.setText("");
+                    return true;
+                }
+                return false;
             }
         });
     }

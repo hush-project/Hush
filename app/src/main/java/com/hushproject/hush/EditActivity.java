@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -170,9 +168,12 @@ public class EditActivity extends AppCompatActivity
         This method is for setting the address variable (so it can be saved to file)
         after a location is chosen in the map activity.
          */
-
-        Intent openMap = new Intent(this, MapActivity.class);
-        startActivity(openMap);
+        //Get location name.
+        String locKey = name;
+        Intent openMapEdit = new Intent(this, MapEditActivity.class);
+        //send information to edit activity.
+        openMapEdit.putExtra("locKey", locKey);
+        startActivity(openMapEdit);
     }
 
     public void saveLoc(View view)
