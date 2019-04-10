@@ -12,8 +12,8 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 
-public class EditActivity extends AppCompatActivity {
-
+public class EditActivity extends AppCompatActivity
+{
     private TextView locName;
     private TextView locAddress;
 
@@ -29,7 +29,8 @@ public class EditActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
 
@@ -66,16 +67,19 @@ public class EditActivity extends AppCompatActivity {
         //seekbars
         final SeekBar ringVol = findViewById(R.id.ringVol);
         ringVol.setProgress(editLocation.getLocRingVol());
-        ringVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        ringVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+        {
             int barVal = 0;
 
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
                 barVal = progress;
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
 
             }
 
@@ -87,16 +91,20 @@ public class EditActivity extends AppCompatActivity {
 
         final SeekBar mediVol = findViewById(R.id.mediVol);
         mediVol.setProgress(editLocation.getLocMediVol());
-        mediVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mediVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+        {
             int barVal = 0;
 
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
+
                 barVal = progress;
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
 
             }
 
@@ -108,16 +116,19 @@ public class EditActivity extends AppCompatActivity {
 
         final SeekBar notiVol = findViewById(R.id.notiVol);
         notiVol.setProgress(editLocation.getLocNotiVol());
-        notiVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        notiVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+        {
             int barVal = 0;
 
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
                 barVal = progress;
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
 
             }
 
@@ -129,16 +140,19 @@ public class EditActivity extends AppCompatActivity {
 
         final SeekBar systVol = findViewById(R.id.systVol);
         systVol.setProgress(editLocation.getLocSystVol());
-        systVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        systVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+        {
             int barVal = 0;
 
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
                 barVal = progress;
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
 
             }
 
@@ -150,7 +164,8 @@ public class EditActivity extends AppCompatActivity {
 
     }
 
-    public void setAddress(View view) {
+    public void setAddress(View view)
+    {
         /*
         This method is for setting the address variable (so it can be saved to file)
         after a location is chosen in the map activity.
@@ -160,13 +175,13 @@ public class EditActivity extends AppCompatActivity {
         startActivity(openMap);
     }
 
-    public void saveLoc(View view) {
+    public void saveLoc(View view)
+    {
         //Test string for address.
         address = "Test";
 
         //Store current values as a UserLocations object.
-        UserLocations saveLocation = new UserLocations(name, address, ringVolume,
-                mediVolume, notiVolume, systVolume);
+        UserLocations saveLocation = new UserLocations(name, address, ringVolume, mediVolume, notiVolume, systVolume);
 
         //Convert to a json string.
         String loc = gson.toJson(saveLocation);
