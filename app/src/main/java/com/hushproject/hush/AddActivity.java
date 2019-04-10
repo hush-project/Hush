@@ -20,7 +20,9 @@ public class AddActivity extends AppCompatActivity
     private TextView locAddress;
 
     private String name = "";
-    private String address = "";
+    private int lat = 0;
+    private int lng = 0;
+    private int rad = 0;
     private int ringVolume = 0;
     private int mediVolume = 0;
     private int notiVolume = 0;
@@ -162,10 +164,8 @@ public class AddActivity extends AppCompatActivity
     {
         name = locName.getText().toString();
 
-        address = "Test";
-
         //Store current values as a UserLocations object
-        UserLocations newLocation = new UserLocations(name, address, ringVolume,
+        UserLocations newLocation = new UserLocations(name, lat, lng, rad, ringVolume,
                 mediVolume, notiVolume, systVolume);
 
         //Convert to json string.

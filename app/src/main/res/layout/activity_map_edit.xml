@@ -13,25 +13,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center|top"
-        android:visibility="gone"
+        android:background="@android:color/background_light"
+        android:visibility="visible"
         android:imeOptions="actionDone"
         android:singleLine="true" />
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
+    <SeekBar
+        android:id="@+id/circleRadius"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|bottom"
-        android:weightSum="1"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:orientation="vertical" >
+        android:layout_gravity="center|bottom"
+        android:visibility="gone"
+        />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/addGeofence"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="16dp"
-            android:src="@android:drawable/ic_input_add" />
-    </LinearLayout>
 </fragment>

@@ -17,6 +17,9 @@ public class EditActivity extends AppCompatActivity
 
     private String name = "";
     private String address = "";
+    private int lat;
+    private int lng;
+    private int rad;
     private int ringVolume = 0;
     private int mediVolume = 0;
     private int notiVolume = 0;
@@ -54,7 +57,9 @@ public class EditActivity extends AppCompatActivity
         UserLocations editLocation = gson.fromJson(locToEdit, UserLocations.class);
 
         //set location text.
-        locAddress.setText(editLocation.getLocationAddress());
+        address = "Lat: " + Integer.toString(lat) + " Lng: " + Integer.toString(lng)
+                + " Radius: " + Integer.toString(rad);
+        locAddress.setText(address);
 
        //get ringer values to prevent settings defaulting to 0 if none are changed.
         ringVolume = editLocation.getLocRingVol();
@@ -165,7 +170,7 @@ public class EditActivity extends AppCompatActivity
     public void setAddress(View view)
     {
         /*
-        This method is for setting the address variable (so it can be saved to file)
+        This method is for setting the address variables (so they can be saved to file)
         after a location is chosen in the map activity.
          */
         //Get location name.
@@ -178,11 +183,8 @@ public class EditActivity extends AppCompatActivity
 
     public void saveLoc(View view)
     {
-        //Test string for address.
-        address = "Test";
-
         //Store current values as a UserLocations object.
-        UserLocations saveLocation = new UserLocations(name, address, ringVolume, mediVolume, notiVolume, systVolume);
+        UserLocations saveLocation = new UserLocations(name, lat, lng, rad, ringVolume, mediVolume, notiVolume, systVolume);
 
         //Convert to a json string.
         String loc = gson.toJson(saveLocation);

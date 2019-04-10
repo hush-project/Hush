@@ -3,6 +3,8 @@ package com.hushproject.hush;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapter.ViewHolder> {
 
     private ArrayList<UserLocations> locations;
+    private AudioManager audioManager;
 
     //default constructor
     public LocationViewAdapter(ArrayList<UserLocations> i) {
@@ -42,7 +45,7 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
         //set name of currentLoc to name textview.
         viewHolder.locTitle.setText(currentLoc.getLocationName());
         //set address from currentLoc to address textview.
-        viewHolder.locAddress.setText(currentLoc.getLocationAddress());
+        viewHolder.locAddress.setText(currentLoc.getAddress());
     }
 
     @Override
@@ -120,6 +123,15 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
                     int volMediTest = getVolumes.getLocMediVol();
                     int volNotiTest = getVolumes.getLocNotiVol();
                     int volSystTest = getVolumes.getLocSystVol();
+
+                    try {
+
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+
                     Log.d("volRingTest", ":" + volRingTest);
                     Log.d("volMediTest", ":" + volMediTest);
                     Log.d("volNotiTest", ":" + volNotiTest);

@@ -3,6 +3,7 @@ package com.hushproject.hush;
 import android.Manifest;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -14,6 +15,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -22,11 +24,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
-
-import java.util.ArrayList;
 
 public class MapEditActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -36,12 +38,13 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
     private SharedPreferences locPrefs;
     private SharedPreferences.Editor editor;
     private String name = "";
+    private Circle myCircle;
     private Gson gson = new Gson();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mapedit);
+        setContentView(R.layout.activity_map_edit);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -76,8 +79,8 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
-        FloatingActionButton addButton = findViewById(R.id.addGeofence);
         final EditText addressField = findViewById(R.id.editAddress);
+        final SeekBar setRadius = findViewById(R.id.circleRadius);
 
         // Here, thisActivity is the current activity
         if (ContextCompat.checkSelfPermission(this,
@@ -119,12 +122,42 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
                     }
                 });
 
-        //onClick listener for add geofence FAB.
-        addButton.setOnClickListener(new View.OnClickListener() {
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
-            public void onClick(View v) {
-                Log.d("Add Geofence", "was clicked");
-                addressField.setVisibility(View.VISIBLE);
+            public void onMapClick(LatLng latLng) {
+                myCircle = googleMap.addCircle(new CircleOptions()
+                        .clickable(true)
+                        .center(latLng)
+                        .radius(5)
+                        .strokeColor(Color.DKGRAY)
+                        .fillColor(Color.LTGRAY));
+
+                mMap.setOnCircleClickListener(new GoogleMap.OnCircleClickListener() {
+                    @Override
+                    public void onCircleClick(Circle circle) {
+                        setRadius.setVisibility(View.VISIBLE);
+                        setRadius.setProgress((int) myCircle.getRadius());
+                        setRadius.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                            @Override
+                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                                myCircle.setRadius(progress);
+                                if(progress == 0) {
+                                    myCircle.remove();
+                                }
+                            }
+
+                            @Override
+                            public void onStartTrackingTouch(SeekBar seekBar) {
+
+                            }
+
+                            @Override
+                            public void onStopTrackingTouch(SeekBar seekBar) {
+                                setRadius.setVisibility(View.GONE);
+                            }
+                        });
+                    }
+                });
             }
         });
 
