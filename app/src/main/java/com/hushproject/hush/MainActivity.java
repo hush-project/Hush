@@ -16,8 +16,8 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends AppCompatActivity
+{
     private RecyclerView locationView;
     private RecyclerView.Adapter locationAdapter;
 
@@ -28,11 +28,11 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> locationKeys;
 
     //ArrayList to store geofences.
-
     Gson gson = new Gson();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -45,12 +45,14 @@ public class MainActivity extends AppCompatActivity {
 
         //Get all location keys.
         Map<String, ?> keys = locPrefs.getAll();
-        for(Map.Entry<String, ?> entries : keys.entrySet()) {
+        for(Map.Entry<String, ?> entries : keys.entrySet())
+        {
             locationKeys.add(entries.getKey());
         }
 
         //Convert all json strings back into UserLocations.
-        for(int i = 0; i < locationKeys.size(); i++) {
+        for(int i = 0; i < locationKeys.size(); i++)
+        {
             //find object using key.
             String savedLoc = locPrefs.getString(locationKeys.get(i), "");
             //convert json string back to object.
@@ -64,9 +66,12 @@ public class MainActivity extends AppCompatActivity {
         locationView = findViewById(R.id.locationViewer);
         locationView.setAdapter(locationAdapter);
         locationView.setLayoutManager(new LinearLayoutManager(this));
+
+
     }
 
-    public void add(View view) {
+    public void add(View view)
+    {
         Intent openAdd = new Intent(this, AddActivity.class);
         startActivity(openAdd);
     }
