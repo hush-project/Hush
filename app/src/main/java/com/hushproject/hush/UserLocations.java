@@ -4,8 +4,8 @@ public class UserLocations {
 
     private String locationName = "";
     private String locationAddress = "";
-    private int locationLat = 0;
-    private int locationLng = 0;
+    private double locationLat = 0;
+    private double locationLng = 0;
     private int locationRad = 0;
     private int locRingVol = 0;
     private int locMediVol = 0;
@@ -13,7 +13,7 @@ public class UserLocations {
     private int locSystVol = 0;
 
     //constructor.
-    public UserLocations(String name, int lat, int lng, int rad, int ring, int medi, int noti, int syst) {
+    public UserLocations(String name, double lat, double lng, int rad, int ring, int medi, int noti, int syst) {
 
        locationName = name;
        locationLat = lat;
@@ -30,17 +30,17 @@ public class UserLocations {
     }
 
     public  String getAddress() {
-        locationAddress = "Latitude: " + Integer.toString(getLocationLat()) + " Longitude: "
-                + Integer.toString(getLocationLng()) + " Radius: "
+        locationAddress = "Latitude: " + Double.toString(getLocationLat()) + " Longitude: "
+                + Double.toString(getLocationLng()) + " Radius: "
                 + Integer.toString(getLocationRad());
         return locationAddress;
     }
 
-    public int getLocationLat() {
+    public double getLocationLat() {
         return locationLat;
     }
 
-    public int getLocationLng() {
+    public double getLocationLng() {
         return locationLng;
     }
 

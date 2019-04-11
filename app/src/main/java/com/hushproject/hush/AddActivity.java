@@ -20,8 +20,8 @@ public class AddActivity extends AppCompatActivity
     private TextView locAddress;
 
     private String name = "";
-    private int lat = 0;
-    private int lng = 0;
+    private double lat = 0;
+    private double lng = 0;
     private int rad = 0;
     private int ringVolume = 0;
     private int mediVolume = 0;

@@ -1,6 +1,7 @@
 package com.hushproject.hush;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -11,13 +12,8 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.SeekBar;
-import android.widget.TextView;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -28,7 +24,16 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.gson.Gson;
+
+import java.util.Arrays;
+import java.util.List;
+
 
 public class MapEditActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -37,7 +42,12 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
     private static int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private SharedPreferences locPrefs;
     private SharedPreferences.Editor editor;
+    private UserLocations current;
     private String name = "";
+    private int latitude;
+    private int longitude;
+    private int radius;
+    private static final String gk = "";
     private Circle myCircle;
     private Gson gson = new Gson();
 
@@ -45,6 +55,12 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_edit);
+        /*
+        // Initialize Places.
+        Places.initialize(getApplicationContext(), gk);
+        // Create a new Places client instance.
+        PlacesClient placesClient = Places.createClient(this);
+        */
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -62,9 +78,17 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
         //check to see if we are getting the key we need to retrieve associated preferences.
         Log.d("Name is", ""  + name);
         String currentMap = locPrefs.getString(name,"");
-        UserLocations current = gson.fromJson(currentMap, UserLocations.class);
+        current = gson.fromJson(currentMap, UserLocations.class);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        FloatingActionButton searchBtn = findViewById(R.id.searchBtn);
+        searchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     /**
@@ -79,7 +103,6 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
-        final EditText addressField = findViewById(R.id.editAddress);
         final SeekBar setRadius = findViewById(R.id.circleRadius);
 
         // Here, thisActivity is the current activity
@@ -108,16 +131,27 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
             // Permission has already been granted
         }
 
+
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
-                            Log.d("Location is", "" + location);
-                            mMap.moveCamera(CameraUpdateFactory
-                                    .newLatLngZoom(new LatLng(location.getLatitude(),
-                                            location.getLongitude()), 20.0f));
+                            if(current.getLocationLat() == 0.0 && current.getLocationLng() == 0.0) {
+                                Log.d("Location is", "" + location);
+                                mMap.moveCamera(CameraUpdateFactory
+                                        .newLatLngZoom(new LatLng(location.getLatitude(),
+                                                location.getLongitude()), 20.0f));
+                            }
+                            else {
+                                location.setLatitude(current.getLocationLat());
+                                location.setLongitude(current.getLocationLat());
+                                Log.d("Location is", "" + location);
+                                mMap.moveCamera(CameraUpdateFactory
+                                        .newLatLngZoom(new LatLng(location.getLatitude(),
+                                                location.getLongitude()), 20.0f));
+                            }
                         }
                     }
                 });
@@ -125,6 +159,7 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
+                googleMap.clear();
                 myCircle = googleMap.addCircle(new CircleOptions()
                         .clickable(true)
                         .center(latLng)
@@ -143,6 +178,7 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
                                 myCircle.setRadius(progress);
                                 if(progress == 0) {
                                     myCircle.remove();
+
                                 }
                             }
 
@@ -154,25 +190,11 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
                             @Override
                             public void onStopTrackingTouch(SeekBar seekBar) {
                                 setRadius.setVisibility(View.GONE);
+
                             }
                         });
                     }
                 });
-            }
-        });
-
-        //get text of addressField and hide it.
-        addressField.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(actionId == EditorInfo.IME_ACTION_DONE) {
-                    Log.d("Address: ", "" + addressField.getText().toString());
-                    addressField.performClick();
-                    addressField.setVisibility(View.GONE);
-                    addressField.setText("");
-                    return true;
-                }
-                return false;
             }
         });
     }

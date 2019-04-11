@@ -17,8 +17,8 @@ public class EditActivity extends AppCompatActivity
 
     private String name = "";
     private String address = "";
-    private int lat;
-    private int lng;
+    private double lat;
+    private double lng;
     private int rad;
     private int ringVolume = 0;
     private int mediVolume = 0;
@@ -51,13 +51,12 @@ public class EditActivity extends AppCompatActivity
 
         locName.setText(name);
 
-
         //Convert gson string to object.
         String locToEdit = locPrefs.getString(name, "");
         UserLocations editLocation = gson.fromJson(locToEdit, UserLocations.class);
 
         //set location text.
-        address = "Lat: " + Integer.toString(lat) + " Lng: " + Integer.toString(lng)
+        address = "Lat: " + Double.toString(lat) + " Lng: " + Double.toString(lng)
                 + " Radius: " + Integer.toString(rad);
         locAddress.setText(address);
 
@@ -178,7 +177,16 @@ public class EditActivity extends AppCompatActivity
         Intent openMapEdit = new Intent(this, MapEditActivity.class);
         //send information to edit activity.
         openMapEdit.putExtra("locKey", locKey);
-        startActivity(openMapEdit);
+        startActivityForResult(openMapEdit, 1);
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if(resultCode == RESULT_OK) {
+
+            }
+        }
     }
 
     public void saveLoc(View view)

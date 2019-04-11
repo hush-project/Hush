@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.location.GeofencingClient;
@@ -20,7 +22,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    private GeofencingClient geofencingClient;
+    public native String getAPIKey();
 
     private RecyclerView locationView;
     private RecyclerView.Adapter locationAdapter;
@@ -39,8 +41,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        geofencingClient = LocationServices.getGeofencingClient(this);
 
         //Create SharedPreferences
         locPrefs = getSharedPreferences("LocPrefs", MODE_PRIVATE);
