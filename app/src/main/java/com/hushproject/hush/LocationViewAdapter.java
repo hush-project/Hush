@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,13 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 
 public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapter.ViewHolder> {
 
     private ArrayList<UserLocations> locations;
-    private AudioManager audioManager;
 
     //default constructor
     public LocationViewAdapter(ArrayList<UserLocations> i) {
@@ -78,6 +75,9 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
             //set context to itemView.
             context = itemView.getContext();
 
+            final AudioManager audioManager =
+                    (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+
             locPrefs = context.getSharedPreferences("LocPrefs", Context.MODE_PRIVATE);
             editor = locPrefs.edit();
 
@@ -124,24 +124,27 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
                 public void onClick(View v) {
                     //retrieve volume settings saved under this key and set device volume to these.
                     UserLocations getVolumes = locations.get(getAdapterPosition());
+
                     //get volumes for this card.
                     int volRingTest = getVolumes.getLocRingVol();
-                    int volMediTest = getVolumes.getLocMediVol();
-                    int volNotiTest = getVolumes.getLocNotiVol();
-                    int volSystTest = getVolumes.getLocSystVol();
 
                     try {
-
+                        if(volRingTest == 0)
+                        {
+                            audioManager.adjustStreamVolume(AudioManager.STREAM_RING,
+                                    AudioManager.ADJUST_MUTE, 0);
+                        }
+                        else {
+                            audioManager.adjustStreamVolume(AudioManager.STREAM_RING,
+                                    AudioManager.ADJUST_UNMUTE, 0);
+                            audioManager.setStreamVolume(AudioManager.STREAM_RING,
+                                    volRingTest, 0);
+                        }
                     }
                     catch (Exception e)
                     {
                         e.printStackTrace();
                     }
-
-                    Log.d("volRingTest", ":" + volRingTest);
-                    Log.d("volMediTest", ":" + volMediTest);
-                    Log.d("volNotiTest", ":" + volNotiTest);
-                    Log.d("volSystTest", ":" + volSystTest);
                 }
             });
         }

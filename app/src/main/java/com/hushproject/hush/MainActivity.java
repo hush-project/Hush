@@ -7,14 +7,13 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import com.google.android.gms.location.LocationServices;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-
-    public native String getAPIKey();
 
     private RecyclerView locationView;
     private RecyclerView.Adapter locationAdapter;
@@ -25,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<String> locationKeys;
 
-    Gson gson = new Gson();
+    private Gson gson = new Gson();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
