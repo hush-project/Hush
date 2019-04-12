@@ -1,7 +1,5 @@
 package com.hushproject.hush;
 
-import java.text.DecimalFormat;
-
 public class UserLocations {
 
     private String locationName = "";

@@ -26,7 +26,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 
-
 public class MapEditActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;

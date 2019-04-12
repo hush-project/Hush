@@ -1,40 +1,28 @@
 package com.hushproject.hush;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationManager;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.SeekBar;
-import android.widget.TextView;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.gson.Gson;
 
 public class MapAddActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -64,6 +52,7 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
                 Log.d("Latitude is: ", "" + latitude);
                 Log.d("Longitude is: ", "" + longitude);
                 Log.d("Radius is: ", "" + radius);
+
                 Intent i = getIntent();
                 i.putExtra("latitude", latitude);
                 i.putExtra("longitude", longitude);
@@ -148,6 +137,7 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
 
                 latitude = latLng.latitude;
                 longitude = latLng.longitude;
+                radius = 5;
                 mMap.setOnCircleClickListener(new GoogleMap.OnCircleClickListener() {
                     @Override
                     public void onCircleClick(Circle circle) {
