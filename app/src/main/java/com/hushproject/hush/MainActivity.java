@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import com.google.android.gms.location.LocationServices;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -54,11 +53,34 @@ public class MainActivity extends AppCompatActivity {
             locations.add(savedLocation);
         }
 
+        startService();
+
         //LocationViewAdapter
         locationAdapter = new LocationViewAdapter(locations);
         locationView = findViewById(R.id.locationViewer);
         locationView.setAdapter(locationAdapter);
         locationView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        stopService();
+    }
+
+    public void startService() {
+        String serviceText = "Hush is scanning for geofence interactions.";
+
+        Intent foregroundServiceIntent = new Intent(this, ForegroundService.class);
+        foregroundServiceIntent.putExtra("serviceText", serviceText);
+
+        startService(foregroundServiceIntent);
+    }
+
+    public void stopService() {
+        Intent foregroundServiceIntent = new Intent(this, ForegroundService.class);
+        stopService(foregroundServiceIntent);
     }
 
     public void add(View view) {
