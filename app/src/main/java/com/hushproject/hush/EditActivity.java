@@ -24,6 +24,7 @@ public class EditActivity extends AppCompatActivity
     private int mediVolume = 0;
     private int notiVolume = 0;
     private int systVolume = 0;
+    private static final int SEND_LOCATION_REQUEST = 1;
 
     Gson gson = new Gson();
 
@@ -55,12 +56,17 @@ public class EditActivity extends AppCompatActivity
         String locToEdit = locPrefs.getString(name, "");
         UserLocations editLocation = gson.fromJson(locToEdit, UserLocations.class);
 
-        //set location text.
-        address = "Lat: " + Double.toString(lat) + " Lng: " + Double.toString(lng)
-                + " Radius: " + Integer.toString(rad);
+        //initialize location variables
+        lat = editLocation.getLocationLat();
+        lng = editLocation.getLocationLng();
+        rad = editLocation.getLocationRad();
+
+
+        //set text for edit geofence button. Variables need renaming.
+        address = "Tap here to edit your geofence.";
         locAddress.setText(address);
 
-       //get ringer values to prevent settings defaulting to 0 if none are changed.
+        //initialize volume variables to prevent accidentally setting them to 0.
         ringVolume = editLocation.getLocRingVol();
         mediVolume = editLocation.getLocMediVol();
         notiVolume = editLocation.getLocNotiVol();
@@ -168,23 +174,21 @@ public class EditActivity extends AppCompatActivity
 
     public void setAddress(View view)
     {
-        /*
-        This method is for setting the address variables (so they can be saved to file)
-        after a location is chosen in the map activity.
-         */
-        //Get location name.
-        String locKey = name;
+
         Intent openMapEdit = new Intent(this, MapEditActivity.class);
-        //send information to edit activity.
-        openMapEdit.putExtra("locKey", locKey);
-        startActivityForResult(openMapEdit, 1);
+        openMapEdit.putExtra("lati", lat);
+        openMapEdit.putExtra("long", lng);
+        openMapEdit.putExtra("rad", rad);
+        startActivityForResult(openMapEdit, SEND_LOCATION_REQUEST);
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == SEND_LOCATION_REQUEST) {
             if(resultCode == RESULT_OK) {
-
+                lat = data.getDoubleExtra("latitude", 0.0);
+                lng = data.getDoubleExtra("longitude", 0.0);
+                rad = data.getIntExtra("radius", 0);
             }
         }
     }

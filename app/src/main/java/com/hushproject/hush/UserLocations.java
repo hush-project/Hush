@@ -1,5 +1,7 @@
 package com.hushproject.hush;
 
+import java.text.DecimalFormat;
+
 public class UserLocations {
 
     private String locationName = "";
@@ -29,12 +31,16 @@ public class UserLocations {
         return locationName;
     }
 
+    /*
     public  String getAddress() {
-        locationAddress = "Latitude: " + Double.toString(getLocationLat()) + " Longitude: "
+        DecimalFormat format = new DecimalFormat("#.00");
+        locationAddress = "Latitude: "
+                + String.format(Double.toString(getLocationLat()), format) + " Longitude: "
                 + Double.toString(getLocationLng()) + " Radius: "
                 + Integer.toString(getLocationRad());
         return locationAddress;
     }
+    */
 
     public double getLocationLat() {
         return locationLat;

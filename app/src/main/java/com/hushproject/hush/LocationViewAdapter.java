@@ -44,8 +44,10 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
 
         //set name of currentLoc to name textview.
         viewHolder.locTitle.setText(currentLoc.getLocationName());
-        //set address from currentLoc to address textview.
-        viewHolder.locAddress.setText(currentLoc.getAddress());
+        //set coordinates in textviews
+        viewHolder.locLat.setText("Lat: " + Double.toString(currentLoc.getLocationLat()));
+        viewHolder.locLng.setText("Lng: " + Double.toString(currentLoc.getLocationLng()));
+        viewHolder.locRad.setText("Rad: " + Double.toString(currentLoc.getLocationRad()));
     }
 
     @Override
@@ -67,7 +69,9 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
         private Button volTestButton;
 
         private TextView locTitle;
-        private TextView locAddress;
+        private TextView locLat;
+        private TextView locLng;
+        private TextView locRad;
 
         public ViewHolder(@NonNull final View itemView) {
             super(itemView);
@@ -78,7 +82,9 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
             editor = locPrefs.edit();
 
             locTitle = itemView.findViewById(R.id.locTitle);
-            locAddress = itemView.findViewById(R.id.locAddress);
+            locLat = itemView.findViewById(R.id.locLat);
+            locLng = itemView.findViewById(R.id.locLng);
+            locRad = itemView.findViewById(R.id.locRad);
             editButton = itemView.findViewById(R.id.editBtn);
             deleteButton = itemView.findViewById(R.id.delBtn);
             volTestButton = itemView.findViewById(R.id.volTest);

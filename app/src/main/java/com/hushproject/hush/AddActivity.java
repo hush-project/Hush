@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.SeekBar;
@@ -27,13 +28,14 @@ public class AddActivity extends AppCompatActivity
     private int mediVolume = 0;
     private int notiVolume = 0;
     private int systVolume = 0;
+    private static final int SEND_LOCATION_REQUEST = 1;
 
-    AudioManager aManager;
-    Context context;
+    private AudioManager aManager;
+    private Context context;
 
-    Gson gson = new Gson();
+    private Gson gson = new Gson();
 
-    SharedPreferences.Editor editor;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -156,8 +158,18 @@ public class AddActivity extends AppCompatActivity
         after a location is chosen in the map activity.
          */
         Intent openMapAdd = new Intent(this, MapAddActivity.class);
-        startActivity(openMapAdd);
+        startActivityForResult(openMapAdd, SEND_LOCATION_REQUEST);
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == SEND_LOCATION_REQUEST) {
+            if(resultCode == RESULT_OK) {
+                lat = data.getDoubleExtra("latitude", 0.0);
+                lng = data.getDoubleExtra("longitude", 0.0);
+                rad = data.getIntExtra("radius", 0);
+            }
+        }
     }
 
     public void saveLoc(View view)

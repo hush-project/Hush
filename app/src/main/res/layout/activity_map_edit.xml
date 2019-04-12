@@ -6,14 +6,6 @@
     android:layout_width="match_parent">
 
     <fragment
-        android:id="@+id/place_autocomplete_fragment"
-        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:imeOptions="actionDone"
-        android:singleLine="true" />
-
-    <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
@@ -21,14 +13,6 @@
         tools:context=".MapEditActivity">
 
     </fragment>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/searchBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right|bottom"
-        android:clickable="true"
-        android:src="@android:drawable/ic_menu_search" />
 
     <SeekBar
         android:id="@+id/circleRadius"
@@ -38,5 +22,12 @@
         android:layout_gravity="center|bottom"
         android:paddingBottom="60dp"
         android:visibility="gone" />
+
+    <Button
+        android:id="@+id/sendBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:text="Send Geofence" />
 
 </FrameLayout>
