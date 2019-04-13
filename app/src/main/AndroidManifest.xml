@@ -33,24 +33,12 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-
-        <activity
-            android:name=".MapAddActivity"
-            android:label="@string/title_activity_map_add"></activity>
-        <activity
-            android:name=".MapEditActivity"
-            android:label="@string/title_activity_map" />
-        <activity android:name=".StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".EditActivity" />
-        <activity android:name=".AddActivity" />
-        <activity android:name=".MainActivity" />
-        <service android:name=".ForegroundService" />
     </application>
 
 </manifest>
