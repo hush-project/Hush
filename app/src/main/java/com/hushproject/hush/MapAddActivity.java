@@ -108,7 +108,6 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
             // Permission has already been granted
         }
 
-
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
@@ -118,11 +117,10 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
                             Log.d("Location is", "" + location);
                             mMap.moveCamera(CameraUpdateFactory
                                     .newLatLngZoom(new LatLng(location.getLatitude(),
-                                            location.getLongitude()), 20.0f));
+                                            location.getLongitude()), 17.0f));
                         }
                     }
                 });
-
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override

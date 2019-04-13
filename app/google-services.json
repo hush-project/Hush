@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "445771776925",
+    "firebase_url": "https://sacred-temple-237202.firebaseio.com",
+    "project_id": "sacred-temple-237202",
+    "storage_bucket": "sacred-temple-237202.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:445771776925:android:2411161d5965788a",
+        "android_client_info": {
+          "package_name": "com.hushproject.hush"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "445771776925-jqb29ho5phovom15mbnjo8dal3k6knbj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjzQyr4EUe-gYiigBnsnnN3f_6bsaA5xI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "445771776925-jqb29ho5phovom15mbnjo8dal3k6knbj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

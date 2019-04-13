@@ -19,9 +19,9 @@ public class MainActivity extends AppCompatActivity {
 
     private SharedPreferences locPrefs;
 
-    private ArrayList<UserLocations> locations;
-
     private ArrayList<String> locationKeys;
+
+    private ArrayList<UserLocations> locations;
 
     private Gson gson = new Gson();
 

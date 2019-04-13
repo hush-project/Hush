@@ -137,7 +137,7 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
                                 Log.d("Location is", "" + location);
                                 mMap.moveCamera(CameraUpdateFactory
                                         .newLatLngZoom(new LatLng(location.getLatitude(),
-                                                location.getLongitude()), 20.0f));
+                                                location.getLongitude()), 17.0f));
                             }
                             else {
                                 location.setLatitude(latitude);
@@ -145,7 +145,7 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
                                 Log.d("Location is", "" + location);
                                 mMap.moveCamera(CameraUpdateFactory
                                         .newLatLngZoom(new LatLng(location.getLatitude(),
-                                                location.getLongitude()), 20.0f));
+                                                location.getLongitude()), 17.0f));
                             }
                         }
                     }

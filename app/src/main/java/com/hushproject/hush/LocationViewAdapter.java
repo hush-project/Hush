@@ -63,7 +63,6 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
 
         private Button editButton;
         private Button deleteButton;
-        private Button volTestButton;
 
         private TextView locTitle;
         private TextView locLat;
@@ -87,7 +86,6 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
             locRad = itemView.findViewById(R.id.locRad);
             editButton = itemView.findViewById(R.id.editBtn);
             deleteButton = itemView.findViewById(R.id.delBtn);
-            volTestButton = itemView.findViewById(R.id.volTest);
 
             //onClick listener for our edit button.
             editButton.setOnClickListener(new View.OnClickListener() {
@@ -115,78 +113,6 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
                     //use cardKey to remove the sharedpreferences from prefs file.
                     editor.remove(cardKey);
                     editor.apply();
-                }
-            });
-
-            //onClick listener for volTest button.
-            volTestButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //retrieve volume settings saved under this key and set device volume to these.
-                    UserLocations getVolumes = locations.get(getAdapterPosition());
-
-                    //get volumes for this card.
-                    int volRingTest = getVolumes.getLocRingVol();
-                    int volMediTest = getVolumes.getLocMediVol();
-                    int volNotiTest = getVolumes.getLocNotiVol();
-                    int volSystTest = getVolumes.getLocSystVol();
-
-                    try {
-                        if(volRingTest == 0)
-                        {
-                            audioManager.adjustStreamVolume(AudioManager.STREAM_RING,
-                                    AudioManager.ADJUST_MUTE, 0);
-                        }
-                        else {
-                            audioManager.adjustStreamVolume(AudioManager.STREAM_RING,
-                                    AudioManager.ADJUST_UNMUTE, 0);
-                            audioManager.setStreamVolume(AudioManager.STREAM_RING,
-                                    volRingTest, 0);
-                        }
-                        if(volMediTest == 0)
-                        {
-                            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
-                                    AudioManager.ADJUST_MUTE, 0);
-                        }
-                        else {
-                            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
-                                    AudioManager.ADJUST_UNMUTE, 0);
-                            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
-                                    volMediTest, 0);
-                        }
-                        if(volNotiTest == 0)
-                        {
-                            audioManager.adjustStreamVolume(AudioManager.STREAM_NOTIFICATION,
-                                    AudioManager.ADJUST_MUTE, 0);
-                        }
-                        else {
-                            audioManager.adjustStreamVolume(AudioManager.STREAM_NOTIFICATION,
-                                    AudioManager.ADJUST_UNMUTE, 0);
-                            audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION,
-                                    volNotiTest, 0);
-                        }
-                        if(volSystTest == 0)
-                        {
-                            audioManager.adjustStreamVolume(AudioManager.STREAM_SYSTEM,
-                                    AudioManager.ADJUST_MUTE, 0);
-                        }
-                        else {
-                            audioManager.adjustStreamVolume(AudioManager.STREAM_SYSTEM,
-                                    AudioManager.ADJUST_UNMUTE, 0);
-                            audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM,
-                                    volSystTest, 0);
-                        }
-
-                        Log.d("Ringer: ", "" + volRingTest);
-                        Log.d("Ringer: ", "" + volMediTest);
-                        Log.d("Ringer: ", "" + volNotiTest);
-                        Log.d("Ringer: ", "" + volSystTest);
-
-                    }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
                 }
             });
         }
