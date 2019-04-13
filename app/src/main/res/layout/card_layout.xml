@@ -17,7 +17,19 @@
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/locAddress"
+            android:id="@+id/locLat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/locLng"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/locRad"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp" />
@@ -28,17 +40,10 @@
             android:orientation="horizontal"
             android:weightSum="5">
 
-            <Button
-                android:id="@+id/volTest"
-                android:layout_width="40dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="VolTest" />
-
             <Space
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="2" />
+                android:layout_weight="3" />
 
             <Button
                 android:id="@+id/editBtn"

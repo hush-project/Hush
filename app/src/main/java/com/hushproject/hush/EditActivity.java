@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -19,10 +17,14 @@ public class EditActivity extends AppCompatActivity
 
     private String name = "";
     private String address = "";
+    private double lat;
+    private double lng;
+    private int rad;
     private int ringVolume = 0;
     private int mediVolume = 0;
     private int notiVolume = 0;
     private int systVolume = 0;
+    private static final int SEND_LOCATION_REQUEST = 1;
 
     Gson gson = new Gson();
 
@@ -50,15 +52,21 @@ public class EditActivity extends AppCompatActivity
 
         locName.setText(name);
 
-
         //Convert gson string to object.
         String locToEdit = locPrefs.getString(name, "");
         UserLocations editLocation = gson.fromJson(locToEdit, UserLocations.class);
 
-        //set location text.
-        locAddress.setText(editLocation.getLocationAddress());
+        //initialize location variables
+        lat = editLocation.getLocationLat();
+        lng = editLocation.getLocationLng();
+        rad = editLocation.getLocationRad();
 
-       //get ringer values to prevent settings defaulting to 0 if none are changed.
+
+        //set text for edit geofence button. Variables need renaming.
+        address = "Tap here to edit your geofence.";
+        locAddress.setText(address);
+
+        //initialize volume variables to prevent accidentally setting them to 0.
         ringVolume = editLocation.getLocRingVol();
         mediVolume = editLocation.getLocMediVol();
         notiVolume = editLocation.getLocNotiVol();
@@ -66,6 +74,7 @@ public class EditActivity extends AppCompatActivity
 
         //seekbars
         final SeekBar ringVol = findViewById(R.id.ringVol);
+        ringVol.setMax(7);
         ringVol.setProgress(editLocation.getLocRingVol());
         ringVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
@@ -90,6 +99,7 @@ public class EditActivity extends AppCompatActivity
         });
 
         final SeekBar mediVol = findViewById(R.id.mediVol);
+        mediVol.setMax(7);
         mediVol.setProgress(editLocation.getLocMediVol());
         mediVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
@@ -115,6 +125,7 @@ public class EditActivity extends AppCompatActivity
         });
 
         final SeekBar notiVol = findViewById(R.id.notiVol);
+        notiVol.setMax(7);
         notiVol.setProgress(editLocation.getLocNotiVol());
         notiVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
@@ -139,6 +150,7 @@ public class EditActivity extends AppCompatActivity
         });
 
         final SeekBar systVol = findViewById(R.id.systVol);
+        systVol.setMax(7);
         systVol.setProgress(editLocation.getLocSystVol());
         systVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
@@ -166,22 +178,29 @@ public class EditActivity extends AppCompatActivity
 
     public void setAddress(View view)
     {
-        /*
-        This method is for setting the address variable (so it can be saved to file)
-        after a location is chosen in the map activity.
-         */
 
-        Intent openMap = new Intent(this, MapActivity.class);
-        startActivity(openMap);
+        Intent openMapEdit = new Intent(this, MapEditActivity.class);
+        openMapEdit.putExtra("lati", lat);
+        openMapEdit.putExtra("long", lng);
+        openMapEdit.putExtra("rad", rad);
+        startActivityForResult(openMapEdit, SEND_LOCATION_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == SEND_LOCATION_REQUEST) {
+            if(resultCode == RESULT_OK) {
+                lat = data.getDoubleExtra("latitude", 0.0);
+                lng = data.getDoubleExtra("longitude", 0.0);
+                rad = data.getIntExtra("radius", 0);
+            }
+        }
     }
 
     public void saveLoc(View view)
     {
-        //Test string for address.
-        address = "Test";
-
         //Store current values as a UserLocations object.
-        UserLocations saveLocation = new UserLocations(name, address, ringVolume, mediVolume, notiVolume, systVolume);
+        UserLocations saveLocation = new UserLocations(name, lat, lng, rad, ringVolume, mediVolume, notiVolume, systVolume);
 
         //Convert to a json string.
         String loc = gson.toJson(saveLocation);

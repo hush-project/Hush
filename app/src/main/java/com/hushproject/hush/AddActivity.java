@@ -1,16 +1,19 @@
 package com.hushproject.hush;
 
+import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
 import com.google.gson.Gson;
 
 public class AddActivity extends AppCompatActivity
@@ -20,18 +23,21 @@ public class AddActivity extends AppCompatActivity
     private TextView locAddress;
 
     private String name = "";
-    private String address = "";
+    private double lat = 0;
+    private double lng = 0;
+    private int rad = 0;
     private int ringVolume = 0;
     private int mediVolume = 0;
     private int notiVolume = 0;
     private int systVolume = 0;
+    private static final int SEND_LOCATION_REQUEST = 1;
 
-    AudioManager aManager;
-    Context context;
+    private AudioManager aManager;
+    private Context context;
 
-    Gson gson = new Gson();
+    private Gson gson = new Gson();
 
-    SharedPreferences.Editor editor;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -53,6 +59,7 @@ public class AddActivity extends AppCompatActivity
 
         //seekbars
         final SeekBar ringVol = findViewById(R.id.ringVol);
+        ringVol.setMax(7);
         ringVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
             int barVal = 0;
@@ -78,6 +85,7 @@ public class AddActivity extends AppCompatActivity
         });
 
         final SeekBar mediVol = findViewById(R.id.mediVol);
+        mediVol.setMax(7);
         mediVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
             int barVal = 0;
@@ -101,6 +109,7 @@ public class AddActivity extends AppCompatActivity
         });
 
         final SeekBar notiVol = findViewById(R.id.notiVol);
+        notiVol.setMax(7);
         notiVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
             int barVal = 0;
@@ -124,6 +133,7 @@ public class AddActivity extends AppCompatActivity
         });
 
         final SeekBar systVol = findViewById(R.id.systVol);
+        systVol.setMax(7);
         systVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
             int barVal = 0;
@@ -153,20 +163,27 @@ public class AddActivity extends AppCompatActivity
         This method is for setting the address variable (so it can be saved to file)
         after a location is chosen in the map activity.
          */
+        Intent openMapAdd = new Intent(this, MapAddActivity.class);
+        startActivityForResult(openMapAdd, SEND_LOCATION_REQUEST);
+    }
 
-        Intent openMap = new Intent(this, MapActivity.class);
-        startActivity(openMap);
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == SEND_LOCATION_REQUEST) {
+            if(resultCode == RESULT_OK) {
+                lat = data.getDoubleExtra("latitude", 0.0);
+                lng = data.getDoubleExtra("longitude", 0.0);
+                rad = data.getIntExtra("radius", 0);
+            }
+        }
     }
 
     public void saveLoc(View view)
     {
         name = locName.getText().toString();
 
-        address = "Test";
-
         //Store current values as a UserLocations object
-        UserLocations newLocation = new UserLocations(name, address, ringVolume,
+        UserLocations newLocation = new UserLocations(name, lat, lng, rad, ringVolume,
                 mediVolume, notiVolume, systVolume);
 
         //Convert to json string.
@@ -180,5 +197,29 @@ public class AddActivity extends AppCompatActivity
         //kill activity to save memory.
         returnToMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(returnToMain);
+    }
+
+    public static class App extends Application {
+        public static final String CHANNEL_ID = "foregroundServiceChannel";
+
+        @Override
+        public void onCreate() {
+            super.onCreate();
+
+            createNotificationChannel();
+        }
+
+        private void createNotificationChannel() {
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel foregroundServiceChannel = new NotificationChannel(
+                        CHANNEL_ID,
+                        "Foreground Service Channel",
+                        NotificationManager.IMPORTANCE_LOW
+                );
+
+                NotificationManager manager = getSystemService(NotificationManager.class);
+                manager.createNotificationChannel(foregroundServiceChannel);
+            }
+        }
     }
 }
