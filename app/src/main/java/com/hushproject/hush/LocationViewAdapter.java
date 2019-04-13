@@ -127,6 +127,9 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
 
                     //get volumes for this card.
                     int volRingTest = getVolumes.getLocRingVol();
+                    int volMediTest = getVolumes.getLocMediVol();
+                    int volNotiTest = getVolumes.getLocNotiVol();
+                    int volSystTest = getVolumes.getLocSystVol();
 
                     try {
                         if(volRingTest == 0)
@@ -140,6 +143,45 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
                             audioManager.setStreamVolume(AudioManager.STREAM_RING,
                                     volRingTest, 0);
                         }
+                        if(volMediTest == 0)
+                        {
+                            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+                                    AudioManager.ADJUST_MUTE, 0);
+                        }
+                        else {
+                            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+                                    AudioManager.ADJUST_UNMUTE, 0);
+                            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
+                                    volMediTest, 0);
+                        }
+                        if(volNotiTest == 0)
+                        {
+                            audioManager.adjustStreamVolume(AudioManager.STREAM_NOTIFICATION,
+                                    AudioManager.ADJUST_MUTE, 0);
+                        }
+                        else {
+                            audioManager.adjustStreamVolume(AudioManager.STREAM_NOTIFICATION,
+                                    AudioManager.ADJUST_UNMUTE, 0);
+                            audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION,
+                                    volNotiTest, 0);
+                        }
+                        if(volSystTest == 0)
+                        {
+                            audioManager.adjustStreamVolume(AudioManager.STREAM_SYSTEM,
+                                    AudioManager.ADJUST_MUTE, 0);
+                        }
+                        else {
+                            audioManager.adjustStreamVolume(AudioManager.STREAM_SYSTEM,
+                                    AudioManager.ADJUST_UNMUTE, 0);
+                            audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM,
+                                    volSystTest, 0);
+                        }
+
+                        Log.d("Ringer: ", "" + volRingTest);
+                        Log.d("Ringer: ", "" + volMediTest);
+                        Log.d("Ringer: ", "" + volNotiTest);
+                        Log.d("Ringer: ", "" + volSystTest);
+
                     }
                     catch (Exception e)
                     {

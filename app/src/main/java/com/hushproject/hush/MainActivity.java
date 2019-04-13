@@ -70,11 +70,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startService() {
-        String serviceText = "Hush is scanning for geofence interactions.";
 
         Intent foregroundServiceIntent = new Intent(this, ForegroundService.class);
-        foregroundServiceIntent.putExtra("serviceText", serviceText);
-
         startService(foregroundServiceIntent);
     }
 
