@@ -1,10 +1,13 @@
 package com.hushproject.hush;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -32,8 +35,13 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
     private static int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private double latitude;
     private double longitude;
+    private double curLat;
+    private double curLng;
     private int radius;
     private Circle myCircle;
+
+    private LocationListener listener;
+    private LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +51,12 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        locationManager =
+                (LocationManager) getApplicationContext()
+                        .getSystemService(Context.LOCATION_SERVICE);
+
+        createGPSListener();
 
         Button send = findViewById(R.id.sendBtn);
 
@@ -153,16 +167,47 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
                     public void onSuccess(Location location) {
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
-                            Log.d("Location is", "" + location);
-                            mMap.moveCamera(CameraUpdateFactory
-                                    .newLatLngZoom(new LatLng(location.getLatitude(),
-                                            location.getLongitude()), 17.0f));
-                            mMap.addMarker(new MarkerOptions()
-                                    .position(new LatLng(location.getLatitude(),
-                                            location.getLongitude()))
-                                    .title("Current Location"));
+                            if(latitude == 0.0 && longitude == 0.0) {
+                                Log.d("Location is", "" + location);
+                                mMap.moveCamera(CameraUpdateFactory
+                                        .newLatLngZoom(new LatLng(location.getLatitude(),
+                                                location.getLongitude()), 17.0f));
+                            }
+                            else {
+                                location.setLatitude(curLat);
+                                location.setLongitude(curLng);
+                                Log.d("Location is", "" + location);
+                                mMap.moveCamera(CameraUpdateFactory
+                                        .newLatLngZoom(new LatLng(location.getLatitude(),
+                                                location.getLongitude()), 17.0f));
+                            }
                         }
                     }
                 });
+    }
+
+    public void createGPSListener() {
+        listener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                curLat = location.getLatitude();
+                curLng = location.getLongitude();
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
     }
 }
