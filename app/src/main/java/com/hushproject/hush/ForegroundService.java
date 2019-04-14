@@ -19,16 +19,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-
-import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
-import com.firebase.geofire.GeoQuery;
-import com.firebase.geofire.GeoQueryEventListener;
-
-import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -52,9 +42,6 @@ public class ForegroundService extends Service {
     private double curLat;
     private double curLng;
 
-    DatabaseReference database;
-    private GeoFire geoFire;
-
     private AudioManager audioManager;
 
     private Timer timer = new Timer();
@@ -66,42 +53,17 @@ public class ForegroundService extends Service {
 
         //Create SharedPreferences
         locPrefs = getSharedPreferences("LocPrefs", MODE_PRIVATE);
-
         locationKeys = new ArrayList<>();
-
         locations = new ArrayList<>();
 
-        audioManager = (AudioManager)getSystemService(AUDIO_SERVICE);
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
-        database = FirebaseDatabase.getInstance().getReference("fences");
-
-        geoFire = new GeoFire(database);
-
-        listener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                curLat = location.getLatitude();
-                curLng = location.getLongitude();
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
+        createGPSListener();
+        getSharedPrefs();
 
         locationManager =
-                (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+                (LocationManager) getApplicationContext()
+                        .getSystemService(Context.LOCATION_SERVICE);
 
 
         TimerTask task = new TimerTask() {
@@ -113,14 +75,14 @@ public class ForegroundService extends Service {
                         Log.d("Updating", "Service is running."
                                 + " " + curLat + " " + curLng);
                         checkGPS();
-                        checkFence();
+                        checkLocation();
                     }
                 });
             }
         };
 
         long delay = 0;
-        long period = 120 * 1000;
+        long period = 60 * 1000;
 
         timer.scheduleAtFixedRate(task, delay, period); //runs every 2 minutes.
     }
@@ -145,9 +107,6 @@ public class ForegroundService extends Service {
                 .build();
 
         startForeground(1, notification);
-
-        getSharedPrefs();
-        updateFences();
 
         return START_REDELIVER_INTENT;
     }
@@ -183,23 +142,29 @@ public class ForegroundService extends Service {
         }
     }
 
-    public void updateFences() {
-        for(int i = 0; i < locations.size(); i++) {
-            UserLocations current = locations.get(i);
+    public void createGPSListener() {
+        listener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                curLat = location.getLatitude();
+                curLng = location.getLongitude();
+            }
 
-            Log.d("currentdata", "is: " + current.getLocationLat()
-            + " " + current.getLocationLat());
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
 
-            geoFire.setLocation(current.getLocationName(),
-                    new GeoLocation(current.getLocationLat(),
-                            current.getLocationLng()),
-                    new GeoFire.CompletionListener() {
-                        @Override
-                        public void onComplete(String key, DatabaseError error) {
-                            Log.d("Database Entry: ", "created.");
-                        }
-                    });
-        }
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
     }
 
     public void checkGPS() {
@@ -211,8 +176,7 @@ public class ForegroundService extends Service {
                 != PackageManager.PERMISSION_GRANTED) {
 
             return;
-        }
-        else {
+        } else {
             locationManager
                     .requestLocationUpdates(LocationManager.GPS_PROVIDER,
                             1000,
@@ -221,25 +185,29 @@ public class ForegroundService extends Service {
         }
     }
 
-    public void checkFence() {
 
-        LatLng radius = new LatLng(curLat, curLng);
+    public void checkLocation() {
+        UserLocations current;
+        Location currentLocation = new Location("dummyprovider");
+        float[] distance = new float[1];
+        for(int i = 0; i < locations.size(); i++) {
+            current = locations.get(i);
+            currentLocation.setLatitude(current.getLocationLat());
+            currentLocation.setLongitude(current.getLocationLng());
 
-        GeoQuery locationQuery = geoFire
-                .queryAtLocation(new GeoLocation(radius.latitude, radius.longitude),
-                        0.5);
-        locationQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
-            @Override
-            public void onKeyEntered(String key, GeoLocation location) {
-                Log.d("User entered location:", " " + key);
-                String savedLoc = locPrefs.getString(key, "");
-                //convert json string back to object.
-                UserLocations savedLocation = gson.fromJson(savedLoc, UserLocations.class);
+            Location.distanceBetween(curLat, curLng,
+                    current.getLocationLat(), current.getLocationLng(), distance);
 
-                int ringVol = savedLocation.getLocRingVol();
-                int mediVol = savedLocation.getLocMediVol();
-                int notiVol = savedLocation.getLocNotiVol();
-                int systVol = savedLocation.getLocSystVol();
+            if(distance[0] > current.getLocationRad()) {
+                Log.d("Not inside of ", "location: " + current.getLocationName());
+            }
+            else {
+                Log.d("Inside of ", "location: " + current.getLocationName());
+
+                int ringVol = current.getLocRingVol();
+                int mediVol = current.getLocMediVol();
+                int notiVol = current.getLocNotiVol();
+                int systVol = current.getLocSystVol();
 
                 if(ringVol == 0) {
                     audioManager.adjustStreamVolume(AudioManager.STREAM_RING,
@@ -284,29 +252,7 @@ public class ForegroundService extends Service {
                     audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM,
                             systVol, 0);
                 }
-
             }
-
-            @Override
-            public void onKeyExited(String key) {
-
-            }
-
-            @Override
-            public void onKeyMoved(String key, GeoLocation location) {
-
-            }
-
-            @Override
-            public void onGeoQueryReady() {
-
-            }
-
-            @Override
-            public void onGeoQueryError(DatabaseError error) {
-
-            }
-        });
+        }
     }
-
 }

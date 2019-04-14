@@ -3,7 +3,6 @@ package com.hushproject.hush;
 public class UserLocations {
 
     private String locationName = "";
-    private String locationAddress = "";
     private double locationLat = 0;
     private double locationLng = 0;
     private int locationRad = 0;
@@ -28,17 +27,6 @@ public class UserLocations {
     public String getLocationName() {
         return locationName;
     }
-
-    /*
-    public  String getAddress() {
-        DecimalFormat format = new DecimalFormat("#.00");
-        locationAddress = "Latitude: "
-                + String.format(Double.toString(getLocationLat()), format) + " Longitude: "
-                + Double.toString(getLocationLng()) + " Radius: "
-                + Integer.toString(getLocationRad());
-        return locationAddress;
-    }
-    */
 
     public double getLocationLat() {
         return locationLat;
