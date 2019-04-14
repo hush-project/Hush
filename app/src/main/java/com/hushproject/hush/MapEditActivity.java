@@ -109,7 +109,7 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
                         .center(latLng)
                         .radius(5)
                         .strokeColor(Color.DKGRAY)
-                        .fillColor(Color.LTGRAY));
+                        .fillColor(0x40D6DBDF));
 
                 latitude = latLng.latitude;
                 longitude = latLng.longitude;
