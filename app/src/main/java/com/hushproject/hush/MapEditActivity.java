@@ -31,16 +31,10 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
     private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationClient;
     private static int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-    private SharedPreferences locPrefs;
-    private SharedPreferences.Editor editor;
-    private UserLocations current;
-    private String name = "";
     private Double latitude;
     private Double longitude;
     private int radius;
-    private static final String gk = "";
     private Circle myCircle;
-    private Gson gson = new Gson();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,31 +88,7 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
         LatLng circleLatLng = new LatLng(latitude, longitude);
         final SeekBar setRadius = findViewById(R.id.circleRadius);
 
-        // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-            } else {
-                // No explanation needed; request the permission
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        } else {
-            // Permission has already been granted
-        }
+        checkPermissions();
 
         myCircle = googleMap.addCircle(new CircleOptions()
                 .clickable(true)
@@ -127,29 +97,7 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
                 .strokeColor(Color.DKGRAY)
                 .fillColor(Color.LTGRAY));
 
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            if(latitude == 0.0 && longitude == 0.0) {
-                                Log.d("Location is", "" + location);
-                                mMap.moveCamera(CameraUpdateFactory
-                                        .newLatLngZoom(new LatLng(location.getLatitude(),
-                                                location.getLongitude()), 17.0f));
-                            }
-                            else {
-                                location.setLatitude(latitude);
-                                location.setLongitude(longitude);
-                                Log.d("Location is", "" + location);
-                                mMap.moveCamera(CameraUpdateFactory
-                                        .newLatLngZoom(new LatLng(location.getLatitude(),
-                                                location.getLongitude()), 17.0f));
-                            }
-                        }
-                    }
-                });
+        zoomSavedLocation();
 
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -161,7 +109,7 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
                         .center(latLng)
                         .radius(5)
                         .strokeColor(Color.DKGRAY)
-                        .fillColor(Color.LTGRAY));
+                        .fillColor(0x40D6DBDF));
 
                 latitude = latLng.latitude;
                 longitude = latLng.longitude;
@@ -197,5 +145,58 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
                 });
             }
         });
+    }
+    public void checkPermissions() {
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        } else {
+            // Permission has already been granted
+        }
+    }
+
+    public void zoomSavedLocation() {
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            if(latitude == 0.0 && longitude == 0.0) {
+                                Log.d("Location is", "" + location);
+                                mMap.moveCamera(CameraUpdateFactory
+                                        .newLatLngZoom(new LatLng(location.getLatitude(),
+                                                location.getLongitude()), 17.0f));
+                            }
+                            else {
+                                location.setLatitude(latitude);
+                                location.setLongitude(longitude);
+                                Log.d("Location is", "" + location);
+                                mMap.moveCamera(CameraUpdateFactory
+                                        .newLatLngZoom(new LatLng(location.getLatitude(),
+                                                location.getLongitude()), 17.0f));
+                            }
+                        }
+                    }
+                });
     }
 }

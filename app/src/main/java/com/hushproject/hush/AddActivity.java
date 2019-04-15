@@ -1,13 +1,9 @@
 package com.hushproject.hush;
 
-import android.app.Application;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
-import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -32,8 +28,7 @@ public class AddActivity extends AppCompatActivity
     private int systVolume = 0;
     private static final int SEND_LOCATION_REQUEST = 1;
 
-    private AudioManager aManager;
-    private Context context;
+    private AudioManager audioManager;
 
     private Gson gson = new Gson();
 
@@ -46,8 +41,7 @@ public class AddActivity extends AppCompatActivity
         setContentView(R.layout.activity_add);
 
         //AudioManager and Context
-        aManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-        context = getApplicationContext();
+        audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 
         //Get SharedPreferences.
         SharedPreferences locPrefs = getSharedPreferences("LocPrefs", MainActivity.MODE_PRIVATE);
@@ -59,7 +53,7 @@ public class AddActivity extends AppCompatActivity
 
         //seekbars
         final SeekBar ringVol = findViewById(R.id.ringVol);
-        ringVol.setMax(7);
+        ringVol.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
         ringVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
             int barVal = 0;
@@ -85,7 +79,7 @@ public class AddActivity extends AppCompatActivity
         });
 
         final SeekBar mediVol = findViewById(R.id.mediVol);
-        mediVol.setMax(7);
+        mediVol.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
         mediVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
             int barVal = 0;
@@ -109,7 +103,7 @@ public class AddActivity extends AppCompatActivity
         });
 
         final SeekBar notiVol = findViewById(R.id.notiVol);
-        notiVol.setMax(7);
+        notiVol.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION));
         notiVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
             int barVal = 0;
@@ -133,7 +127,7 @@ public class AddActivity extends AppCompatActivity
         });
 
         final SeekBar systVol = findViewById(R.id.systVol);
-        systVol.setMax(7);
+        systVol.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM));
         systVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
             int barVal = 0;
@@ -197,29 +191,5 @@ public class AddActivity extends AppCompatActivity
         //kill activity to save memory.
         returnToMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(returnToMain);
-    }
-
-    public static class App extends Application {
-        public static final String CHANNEL_ID = "foregroundServiceChannel";
-
-        @Override
-        public void onCreate() {
-            super.onCreate();
-
-            createNotificationChannel();
-        }
-
-        private void createNotificationChannel() {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                NotificationChannel foregroundServiceChannel = new NotificationChannel(
-                        CHANNEL_ID,
-                        "Foreground Service Channel",
-                        NotificationManager.IMPORTANCE_LOW
-                );
-
-                NotificationManager manager = getSystemService(NotificationManager.class);
-                manager.createNotificationChannel(foregroundServiceChannel);
-            }
-        }
     }
 }

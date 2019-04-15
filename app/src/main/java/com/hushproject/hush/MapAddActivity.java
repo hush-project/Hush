@@ -1,10 +1,13 @@
 package com.hushproject.hush;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -22,6 +25,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 public class MapAddActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -31,9 +35,13 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
     private static int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private double latitude;
     private double longitude;
+    private double curLat;
+    private double curLng;
     private int radius;
     private Circle myCircle;
-    private static final String gk = "";
+
+    private LocationListener listener;
+    private LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +51,12 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        locationManager =
+                (LocationManager) getApplicationContext()
+                        .getSystemService(Context.LOCATION_SERVICE);
+
+        createGPSListener();
 
         Button send = findViewById(R.id.sendBtn);
 
@@ -65,62 +79,14 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
-
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
 
         final SeekBar setRadius = findViewById(R.id.circleRadius);
 
-        // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-            } else {
-                // No explanation needed; request the permission
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        } else {
-            // Permission has already been granted
-        }
-
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            Log.d("Location is", "" + location);
-                            mMap.moveCamera(CameraUpdateFactory
-                                    .newLatLngZoom(new LatLng(location.getLatitude(),
-                                            location.getLongitude()), 17.0f));
-                        }
-                    }
-                });
+        checkPermissions();
+        getLastLocation();
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -131,7 +97,7 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
                         .center(latLng)
                         .radius(5)
                         .strokeColor(Color.DKGRAY)
-                        .fillColor(Color.LTGRAY));
+                        .fillColor(0x40D6DBDF));
 
                 latitude = latLng.latitude;
                 longitude = latLng.longitude;
@@ -165,5 +131,93 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
                 });
             }
         });
+    }
+    public void checkPermissions() {
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        } else {
+            // Permission has already been granted
+        }
+    }
+
+    public void getLastLocation() {
+        locationManager
+                .requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        1000,
+                        1,
+                        listener);
+
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            if(latitude == 0.0 && longitude == 0.0) {
+                                Log.d("Location is", "" + location);
+                                mMap.moveCamera(CameraUpdateFactory
+                                        .newLatLngZoom(new LatLng(location.getLatitude(),
+                                                location.getLongitude()), 17.0f));
+                            }
+                            else {
+                                location.setLatitude(curLat);
+                                location.setLongitude(curLng);
+                                Log.d("Location is", "" + location);
+                                mMap.moveCamera(CameraUpdateFactory
+                                        .newLatLngZoom(new LatLng(location.getLatitude(),
+                                                location.getLongitude()), 17.0f));
+                                mMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(curLat, curLng))
+                                    .title("You are here.")
+                                );
+                            }
+                        }
+                    }
+                });
+    }
+
+    public void createGPSListener() {
+        listener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                curLat = location.getLatitude();
+                curLng = location.getLongitude();
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
     }
 }
