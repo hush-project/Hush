@@ -65,7 +65,6 @@ public class ForegroundService extends Service {
                 (LocationManager) getApplicationContext()
                         .getSystemService(Context.LOCATION_SERVICE);
 
-
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
@@ -80,7 +79,7 @@ public class ForegroundService extends Service {
         };
 
         long delay = 0;
-        long period = 60 * 1000;
+        long period = 120 * 1000;
 
         timer.scheduleAtFixedRate(task, delay, period); //runs every 2 minutes.
     }
@@ -201,38 +200,11 @@ public class ForegroundService extends Service {
             }
             else {
 
-                int ringVol;
-                int mediVol;
-                int notiVol;
-                int systVol;
+                int ringVol = current.getLocRingVol();
+                int mediVol = current.getLocMediVol();
+                int notiVol = current.getLocNotiVol();
+                int systVol = current.getLocSystVol();
 
-                if(current.getLocRingVol() == 100) {
-                    ringVol = current.getLocRingVol();
-                }
-                else {
-                    ringVol = current.getLocRingVol() / 100;
-                }
-
-                if(current.getLocMediVol() == 100) {
-                    mediVol = current.getLocMediVol();
-                }
-                else {
-                    mediVol = current.getLocMediVol() / 100;
-                }
-
-                if(current.getLocNotiVol() == 100) {
-                    notiVol = current.getLocNotiVol();
-                }
-                else {
-                    notiVol = current.getLocNotiVol() / 100;
-                }
-
-                if(current.getLocSystVol() == 100) {
-                    systVol = current.getLocSystVol();
-                }
-                else {
-                    systVol = current.getLocSystVol() / 100;
-                }
 
                 if(ringVol == 0) {
                     audioManager.adjustStreamVolume(AudioManager.STREAM_RING,
@@ -241,9 +213,7 @@ public class ForegroundService extends Service {
                 else {
                     audioManager.adjustStreamVolume(AudioManager.STREAM_RING,
                             AudioManager.ADJUST_UNMUTE, 0);
-                    audioManager.setStreamVolume(AudioManager.STREAM_RING,
-                            audioManager.getStreamMaxVolume(AudioManager.STREAM_RING)
-                                    * ringVol, 0);
+                    audioManager.setStreamVolume(AudioManager.STREAM_RING, ringVol, 0);
                 }
 
                 if(mediVol == 0) {
@@ -253,9 +223,7 @@ public class ForegroundService extends Service {
                 else {
                     audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
                             AudioManager.ADJUST_UNMUTE, 0);
-                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
-                            audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-                                    * mediVol, 0);
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mediVol, 0);
                 }
 
                 if(notiVol == 0) {
@@ -265,9 +233,7 @@ public class ForegroundService extends Service {
                 else {
                     audioManager.adjustStreamVolume(AudioManager.STREAM_NOTIFICATION,
                             AudioManager.ADJUST_UNMUTE, 0);
-                    audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION,
-                            audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION)
-                                    * notiVol, 0);
+                    audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, notiVol, 0);
                 }
 
                 if(systVol == 0) {
@@ -277,9 +243,7 @@ public class ForegroundService extends Service {
                 else {
                     audioManager.adjustStreamVolume(AudioManager.STREAM_SYSTEM,
                             AudioManager.ADJUST_UNMUTE, 0);
-                    audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM,
-                            audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM)
-                            * systVol, 0);
+                    audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, systVol, 0);
                 }
             }
         }
