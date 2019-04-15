@@ -72,8 +72,6 @@ public class ForegroundService extends Service {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d("Updating", "Service is running."
-                                + " " + curLat + " " + curLng);
                         checkGPS();
                         checkLocation();
                     }
@@ -99,8 +97,8 @@ public class ForegroundService extends Service {
 
         Notification notification
                 = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Hush")
-                .setContentText("Hush is listening for geofence transitions.")
+                .setContentTitle("Hush is running.")
+                .setContentText("Hush is listening for location transitions.")
                 .setSmallIcon(R.drawable.ic_android)
                 .addAction(closeAction)
                 .setContentIntent(pendingIntent)
@@ -188,7 +186,7 @@ public class ForegroundService extends Service {
 
     public void checkLocation() {
         UserLocations current;
-        Location currentLocation = new Location("dummyprovider");
+        Location currentLocation = new Location(LocationManager.GPS_PROVIDER);
         float[] distance = new float[1];
         for(int i = 0; i < locations.size(); i++) {
             current = locations.get(i);
@@ -199,15 +197,42 @@ public class ForegroundService extends Service {
                     current.getLocationLat(), current.getLocationLng(), distance);
 
             if(distance[0] > current.getLocationRad()) {
-                Log.d("Not inside of ", "location: " + current.getLocationName());
+
             }
             else {
-                Log.d("Inside of ", "location: " + current.getLocationName());
 
-                int ringVol = current.getLocRingVol();
-                int mediVol = current.getLocMediVol();
-                int notiVol = current.getLocNotiVol();
-                int systVol = current.getLocSystVol();
+                int ringVol;
+                int mediVol;
+                int notiVol;
+                int systVol;
+
+                if(current.getLocRingVol() == 100) {
+                    ringVol = current.getLocRingVol();
+                }
+                else {
+                    ringVol = current.getLocRingVol() / 100;
+                }
+
+                if(current.getLocMediVol() == 100) {
+                    mediVol = current.getLocMediVol();
+                }
+                else {
+                    mediVol = current.getLocMediVol() / 100;
+                }
+
+                if(current.getLocNotiVol() == 100) {
+                    notiVol = current.getLocNotiVol();
+                }
+                else {
+                    notiVol = current.getLocNotiVol() / 100;
+                }
+
+                if(current.getLocSystVol() == 100) {
+                    systVol = current.getLocSystVol();
+                }
+                else {
+                    systVol = current.getLocSystVol() / 100;
+                }
 
                 if(ringVol == 0) {
                     audioManager.adjustStreamVolume(AudioManager.STREAM_RING,
@@ -217,7 +242,8 @@ public class ForegroundService extends Service {
                     audioManager.adjustStreamVolume(AudioManager.STREAM_RING,
                             AudioManager.ADJUST_UNMUTE, 0);
                     audioManager.setStreamVolume(AudioManager.STREAM_RING,
-                            ringVol, 0);
+                            audioManager.getStreamMaxVolume(AudioManager.STREAM_RING)
+                                    * ringVol, 0);
                 }
 
                 if(mediVol == 0) {
@@ -228,7 +254,8 @@ public class ForegroundService extends Service {
                     audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
                             AudioManager.ADJUST_UNMUTE, 0);
                     audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
-                            mediVol, 0);
+                            audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+                                    * mediVol, 0);
                 }
 
                 if(notiVol == 0) {
@@ -239,7 +266,8 @@ public class ForegroundService extends Service {
                     audioManager.adjustStreamVolume(AudioManager.STREAM_NOTIFICATION,
                             AudioManager.ADJUST_UNMUTE, 0);
                     audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION,
-                            notiVol, 0);
+                            audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION)
+                                    * notiVol, 0);
                 }
 
                 if(systVol == 0) {
@@ -250,7 +278,8 @@ public class ForegroundService extends Service {
                     audioManager.adjustStreamVolume(AudioManager.STREAM_SYSTEM,
                             AudioManager.ADJUST_UNMUTE, 0);
                     audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM,
-                            systVol, 0);
+                            audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM)
+                            * systVol, 0);
                 }
             }
         }

@@ -74,7 +74,6 @@ public class EditActivity extends AppCompatActivity
 
         //seekbars
         final SeekBar ringVol = findViewById(R.id.ringVol);
-        ringVol.setMax(7);
         ringVol.setProgress(editLocation.getLocRingVol());
         ringVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
@@ -99,7 +98,6 @@ public class EditActivity extends AppCompatActivity
         });
 
         final SeekBar mediVol = findViewById(R.id.mediVol);
-        mediVol.setMax(7);
         mediVol.setProgress(editLocation.getLocMediVol());
         mediVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
@@ -125,7 +123,6 @@ public class EditActivity extends AppCompatActivity
         });
 
         final SeekBar notiVol = findViewById(R.id.notiVol);
-        notiVol.setMax(7);
         notiVol.setProgress(editLocation.getLocNotiVol());
         notiVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
@@ -150,7 +147,6 @@ public class EditActivity extends AppCompatActivity
         });
 
         final SeekBar systVol = findViewById(R.id.systVol);
-        systVol.setMax(7);
         systVol.setProgress(editLocation.getLocSystVol());
         systVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {

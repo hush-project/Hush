@@ -55,7 +55,6 @@ public class AddActivity extends AppCompatActivity
 
         //seekbars
         final SeekBar ringVol = findViewById(R.id.ringVol);
-        ringVol.setMax(7);
         ringVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
             int barVal = 0;
@@ -81,7 +80,6 @@ public class AddActivity extends AppCompatActivity
         });
 
         final SeekBar mediVol = findViewById(R.id.mediVol);
-        mediVol.setMax(7);
         mediVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
             int barVal = 0;
@@ -105,7 +103,6 @@ public class AddActivity extends AppCompatActivity
         });
 
         final SeekBar notiVol = findViewById(R.id.notiVol);
-        notiVol.setMax(7);
         notiVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
             int barVal = 0;
@@ -129,7 +126,6 @@ public class AddActivity extends AppCompatActivity
         });
 
         final SeekBar systVol = findViewById(R.id.systVol);
-        systVol.setMax(7);
         systVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
             int barVal = 0;
