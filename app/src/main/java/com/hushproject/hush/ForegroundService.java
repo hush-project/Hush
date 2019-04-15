@@ -79,7 +79,7 @@ public class ForegroundService extends Service {
         };
 
         long delay = 0;
-        long period = 120 * 1000;
+        long period = 60 * 1000;
 
         timer.scheduleAtFixedRate(task, delay, period); //runs every 2 minutes.
     }

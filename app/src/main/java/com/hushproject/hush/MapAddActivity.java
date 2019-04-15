@@ -161,6 +161,12 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
     }
 
     public void getLastLocation() {
+        locationManager
+                .requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        1000,
+                        1,
+                        listener);
+
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
@@ -172,11 +178,6 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
                                 mMap.moveCamera(CameraUpdateFactory
                                         .newLatLngZoom(new LatLng(location.getLatitude(),
                                                 location.getLongitude()), 17.0f));
-                                mMap.addMarker(new MarkerOptions()
-                                    .position(new LatLng(location.getLatitude(),
-                                            location.getLongitude()))
-                                        .title("You Are Here.")
-                                );
                             }
                             else {
                                 location.setLatitude(curLat);
@@ -185,6 +186,10 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
                                 mMap.moveCamera(CameraUpdateFactory
                                         .newLatLngZoom(new LatLng(location.getLatitude(),
                                                 location.getLongitude()), 17.0f));
+                                mMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(curLat, curLng))
+                                    .title("You are here.")
+                                );
                             }
                         }
                     }
