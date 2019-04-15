@@ -28,8 +28,7 @@ public class AddActivity extends AppCompatActivity
     private int systVolume = 0;
     private static final int SEND_LOCATION_REQUEST = 1;
 
-    private AudioManager aManager;
-    private Context context;
+    private AudioManager audioManager;
 
     private Gson gson = new Gson();
 
@@ -42,8 +41,7 @@ public class AddActivity extends AppCompatActivity
         setContentView(R.layout.activity_add);
 
         //AudioManager and Context
-        aManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-        context = getApplicationContext();
+        audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 
         //Get SharedPreferences.
         SharedPreferences locPrefs = getSharedPreferences("LocPrefs", MainActivity.MODE_PRIVATE);
@@ -55,7 +53,7 @@ public class AddActivity extends AppCompatActivity
 
         //seekbars
         final SeekBar ringVol = findViewById(R.id.ringVol);
-        ringVol.setMax(7);
+        ringVol.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
         ringVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
             int barVal = 0;
@@ -81,7 +79,7 @@ public class AddActivity extends AppCompatActivity
         });
 
         final SeekBar mediVol = findViewById(R.id.mediVol);
-        mediVol.setMax(15);
+        mediVol.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
         mediVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
             int barVal = 0;
@@ -105,7 +103,7 @@ public class AddActivity extends AppCompatActivity
         });
 
         final SeekBar notiVol = findViewById(R.id.notiVol);
-        notiVol.setMax(7);
+        notiVol.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION));
         notiVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
             int barVal = 0;
@@ -129,7 +127,7 @@ public class AddActivity extends AppCompatActivity
         });
 
         final SeekBar systVol = findViewById(R.id.systVol);
-        systVol.setMax(7);
+        systVol.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM));
         systVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
             int barVal = 0;

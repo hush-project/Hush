@@ -1,7 +1,9 @@
 package com.hushproject.hush;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -26,15 +28,19 @@ public class EditActivity extends AppCompatActivity
     private int systVolume = 0;
     private static final int SEND_LOCATION_REQUEST = 1;
 
-    Gson gson = new Gson();
+    private AudioManager audioManager;
 
-    SharedPreferences.Editor editor;
+    private Gson gson = new Gson();
+
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
+
+        audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 
         //textfields.
         locName = findViewById(R.id.locationName);
@@ -74,7 +80,7 @@ public class EditActivity extends AppCompatActivity
 
         //seekbars
         final SeekBar ringVol = findViewById(R.id.ringVol);
-        ringVol.setMax(7);
+        ringVol.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
         ringVol.setProgress(editLocation.getLocRingVol());
         ringVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
@@ -99,7 +105,7 @@ public class EditActivity extends AppCompatActivity
         });
 
         final SeekBar mediVol = findViewById(R.id.mediVol);
-        mediVol.setMax(15);
+        mediVol.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
         mediVol.setProgress(editLocation.getLocMediVol());
         mediVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
@@ -125,7 +131,7 @@ public class EditActivity extends AppCompatActivity
         });
 
         final SeekBar notiVol = findViewById(R.id.notiVol);
-        notiVol.setMax(7);
+        notiVol.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION));
         notiVol.setProgress(editLocation.getLocNotiVol());
         notiVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
@@ -150,7 +156,7 @@ public class EditActivity extends AppCompatActivity
         });
 
         final SeekBar systVol = findViewById(R.id.systVol);
-        systVol.setMax(7);
+        systVol.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM));
         systVol.setProgress(editLocation.getLocSystVol());
         systVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
