@@ -24,8 +24,6 @@ public class AddActivity extends AppCompatActivity
     private int rad = 0;
     private int ringVolume = 0;
     private int mediVolume = 0;
-    private int notiVolume = 0;
-    private int systVolume = 0;
     private static final int SEND_LOCATION_REQUEST = 1;
 
     private AudioManager audioManager;
@@ -101,54 +99,6 @@ public class AddActivity extends AppCompatActivity
                 mediVolume = barVal;
             }
         });
-
-        final SeekBar notiVol = findViewById(R.id.notiVol);
-        notiVol.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION));
-        notiVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
-        {
-            int barVal = 0;
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
-            {
-                barVal = progress;
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar)
-            {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                notiVolume = barVal;
-            }
-        });
-
-        final SeekBar systVol = findViewById(R.id.systVol);
-        systVol.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM));
-        systVol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
-        {
-            int barVal = 0;
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
-            {
-                barVal = progress;
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar)
-            {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                systVolume = barVal;
-            }
-        });
     }
 
     public void setAddress(View view)
@@ -177,8 +127,7 @@ public class AddActivity extends AppCompatActivity
         name = locName.getText().toString();
 
         //Store current values as a UserLocations object
-        UserLocations newLocation = new UserLocations(name, lat, lng, rad, ringVolume,
-                mediVolume, notiVolume, systVolume);
+        UserLocations newLocation = new UserLocations(name, lat, lng, rad, ringVolume, mediVolume);
 
         //Convert to json string.
         String loc = gson.toJson(newLocation);
