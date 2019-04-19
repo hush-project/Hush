@@ -15,6 +15,7 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
@@ -39,13 +40,17 @@ public class ForegroundService extends Service {
 
     private Gson gson = new Gson();
 
+    private String curName;
     private double curLat;
     private double curLng;
 
     private AudioManager audioManager;
 
-    private Timer timer = new Timer();
-    private Handler handler = new Handler();
+    //time intervals for the handler. startInterval is 10 seconds, regular interval is 1 minute.
+    private int startInterval = 10000;
+    private int interval = 60000;
+    //handler for location checking.
+    private Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     public void onCreate() {
@@ -56,6 +61,7 @@ public class ForegroundService extends Service {
         locationKeys = new ArrayList<>();
         locations = new ArrayList<>();
 
+        //AudioManager declaration.
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
         createGPSListener();
@@ -65,41 +71,35 @@ public class ForegroundService extends Service {
                 (LocationManager) getApplicationContext()
                         .getSystemService(Context.LOCATION_SERVICE);
 
-        TimerTask task = new TimerTask() {
+        checkGPS();
+
+        Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        checkGPS();
-                        checkLocation();
-                    }
-                });
+                checkGPS();
+                checkLocation();
+
+                handler.postDelayed(this, interval);
             }
         };
 
-        long delay = 0;
-        long period = 60 * 1000;
-
-        timer.scheduleAtFixedRate(task, delay, period); //runs every 2 minutes.
+        handler.postDelayed(runnable, startInterval);
     }
 
+    //this sets up the foreground notification for the app.
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 0, notificationIntent, 0);
-        NotificationCompat.Action closeAction
-                = new NotificationCompat.Action
-                .Builder(R.drawable.ic_close, "Close", pendingIntent).build();
 
+        //the foreground notification.
         Notification notification
                 = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Hush is running.")
-                .setContentText("Hush is listening for location transitions.")
+                .setContentText(curName)
                 .setSmallIcon(R.drawable.ic_android)
-                .addAction(closeAction)
                 .setContentIntent(pendingIntent)
                 .build();
 
@@ -119,6 +119,7 @@ public class ForegroundService extends Service {
         return null;
     }
 
+    //method for fetching sharedprefs.
     public void getSharedPrefs() {
         locationKeys.clear();
         locations.clear();
@@ -139,6 +140,7 @@ public class ForegroundService extends Service {
         }
     }
 
+    //method for creating GPS listener.
     public void createGPSListener() {
         listener = new LocationListener() {
             @Override
@@ -164,6 +166,7 @@ public class ForegroundService extends Service {
         };
     }
 
+    //method for getting location updates.
     public void checkGPS() {
         if (ActivityCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -173,7 +176,8 @@ public class ForegroundService extends Service {
                 != PackageManager.PERMISSION_GRANTED) {
 
             return;
-        } else {
+        }
+        else {
             locationManager
                     .requestLocationUpdates(LocationManager.GPS_PROVIDER,
                             1000,
@@ -182,7 +186,12 @@ public class ForegroundService extends Service {
         }
     }
 
-
+    /*
+    * This method is the work horse of the foreground service.
+    * It checks the user's location against the area within the radius of the circle.
+    * If the user is within this radius, the app then changes their ringtone and music volumes.
+    * It also updates the foreground notification to display what location they are currently in.
+     */
     public void checkLocation() {
         UserLocations current;
         Location currentLocation = new Location(LocationManager.GPS_PROVIDER);
@@ -196,15 +205,16 @@ public class ForegroundService extends Service {
                     current.getLocationLat(), current.getLocationLng(), distance);
 
             if(distance[0] > current.getLocationRad()) {
-
+                Log.d("Not in", "location: " + current.getLocationName());
             }
             else {
 
+                Log.d("In", "location: " + current.getLocationName());
+
+                curName = "You are in: " + current.getLocationName();
+
                 int ringVol = current.getLocRingVol();
                 int mediVol = current.getLocMediVol();
-                int notiVol = current.getLocNotiVol();
-                int systVol = current.getLocSystVol();
-
 
                 if(ringVol == 0) {
                     audioManager.adjustStreamVolume(AudioManager.STREAM_RING,
@@ -226,25 +236,6 @@ public class ForegroundService extends Service {
                     audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mediVol, 0);
                 }
 
-                if(notiVol == 0) {
-                    audioManager.adjustStreamVolume(AudioManager.STREAM_NOTIFICATION,
-                            AudioManager.ADJUST_MUTE, 0);
-                }
-                else {
-                    audioManager.adjustStreamVolume(AudioManager.STREAM_NOTIFICATION,
-                            AudioManager.ADJUST_UNMUTE, 0);
-                    audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, notiVol, 0);
-                }
-
-                if(systVol == 0) {
-                    audioManager.adjustStreamVolume(AudioManager.STREAM_SYSTEM,
-                            AudioManager.ADJUST_MUTE, 0);
-                }
-                else {
-                    audioManager.adjustStreamVolume(AudioManager.STREAM_SYSTEM,
-                            AudioManager.ADJUST_UNMUTE, 0);
-                    audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, systVol, 0);
-                }
             }
         }
     }

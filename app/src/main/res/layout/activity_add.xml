@@ -62,40 +62,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
-        <TextView
-            android:id="@+id/notiText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight=".5"
-            android:paddingLeft="2dp"
-            android:text="Notifications"
-            android:textSize="18sp" />
-
-        <SeekBar
-            android:id="@+id/notiVol"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/systText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight=".5"
-            android:paddingLeft="2dp"
-            android:text="System"
-            android:textSize="18sp" />
-
-        <SeekBar
-            android:id="@+id/systVol"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
         <Space
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2" />
+            android:layout_weight="5" />
 
         <Button
             android:id="@+id/saveLoc"
