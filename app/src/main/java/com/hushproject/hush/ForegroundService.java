@@ -44,6 +44,8 @@ public class ForegroundService extends Service {
     private double curLat;
     private double curLng;
 
+    private int dummyvariable;
+
     private AudioManager audioManager;
 
     //time intervals for the handler. startInterval is 10 seconds, regular interval is 1 minute.
