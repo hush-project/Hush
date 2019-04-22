@@ -14,41 +14,57 @@ import android.view.View;
 public class StartActivity extends AppCompatActivity
 {
     private static int MY_PERMISSIONS_REQUEST_ACCESS_NOTIFICATION_POLICY = 1;
+    private static int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    private static int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
-        // Here, thisActivity is the current activity
+
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_NOTIFICATION_POLICY)
                 != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted
-            // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_NOTIFICATION_POLICY)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
             } else {
-                // No explanation needed; request the permission
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_NOTIFICATION_POLICY},
                         MY_PERMISSIONS_REQUEST_ACCESS_NOTIFICATION_POLICY);
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
             }
-            //Launch new screen to get permission to access sound settings
-            Intent intent = null;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
-            {
-                intent = new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+        }
+        else {
+
+        }
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
             }
-            startActivity(intent);
-        } else {
-            // Permission has already been granted
+        }
+        else {
+
+        }
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION);
+            }
+        }
+        else {
 
         }
 
