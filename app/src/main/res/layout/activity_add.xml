@@ -18,9 +18,10 @@
             android:layout_height="wrap_content"
             android:layout_weight=".5"
             android:ems="10"
-            android:hint="Location Name"
+            android:hint="@string/location_name_hint"
             android:inputType="textPersonName"
-            android:paddingLeft="2dp" />
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp" />
 
         <TextView
             android:id="@+id/address"
@@ -28,8 +29,9 @@
             android:layout_height="wrap_content"
             android:layout_weight=".5"
             android:onClick="setAddress"
-            android:hint="Tap here to set Geofence"
+            android:hint="@string/location_add_hint"
             android:paddingLeft="2dp"
+            android:paddingRight="2dp"
             android:textSize="18sp" />
 
         <TextView
@@ -38,7 +40,8 @@
             android:layout_height="wrap_content"
             android:layout_weight=".5"
             android:paddingLeft="2dp"
-            android:text="Ringtone"
+            android:paddingRight="2dp"
+            android:text="@string/bartext_ring"
             android:textSize="18sp" />
 
         <SeekBar
@@ -53,7 +56,8 @@
             android:layout_height="wrap_content"
             android:layout_weight=".5"
             android:paddingLeft="2dp"
-            android:text="Media"
+            android:paddingRight="2dp"
+            android:text="@string/bartext_medi"
             android:textSize="18sp" />
 
         <SeekBar
@@ -72,7 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Save"
+            android:text="@string/button_save"
             android:onClick="saveLoc"/>
 
     </LinearLayout>
