@@ -19,15 +19,15 @@ import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import static com.hushproject.hush.App.CHANNEL_ID;
+import static com.hushproject.hush.App.CHANNEL_ID1;
+import static com.hushproject.hush.App.CHANNEL_ID2;
 
 public class ForegroundService extends Service {
 
@@ -44,9 +44,9 @@ public class ForegroundService extends Service {
     private double curLat;
     private double curLng;
 
-    private int dummyvariable;
-
     private AudioManager audioManager;
+
+    private NotificationManagerCompat notificationManager;
 
     //time intervals for the handler. startInterval is 10 seconds, regular interval is 1 minute.
     private int startInterval = 10000;
@@ -66,6 +66,9 @@ public class ForegroundService extends Service {
         //AudioManager declaration.
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
+        //NotificationManager declaration
+        notificationManager = NotificationManagerCompat.from(this);
+
         createGPSListener();
         getSharedPrefs();
 
@@ -80,6 +83,7 @@ public class ForegroundService extends Service {
             public void run() {
                 checkGPS();
                 checkLocation();
+                createNotification();
 
                 handler.postDelayed(this, interval);
             }
@@ -93,14 +97,14 @@ public class ForegroundService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Intent notificationIntent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 0, notificationIntent, 0);
 
         //the foreground notification.
         Notification notification
-                = new NotificationCompat.Builder(this, CHANNEL_ID)
+                = new NotificationCompat.Builder(this, CHANNEL_ID1)
                 .setContentTitle("Hush is running.")
-                .setContentText(curName)
                 .setSmallIcon(R.drawable.ic_android)
                 .setContentIntent(pendingIntent)
                 .build();
@@ -113,6 +117,7 @@ public class ForegroundService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        notificationManager.cancelAll();
     }
 
     @Nullable
@@ -196,8 +201,11 @@ public class ForegroundService extends Service {
      */
     public void checkLocation() {
         UserLocations current;
+
         Location currentLocation = new Location(LocationManager.GPS_PROVIDER);
+
         float[] distance = new float[1];
+
         for(int i = 0; i < locations.size(); i++) {
             current = locations.get(i);
             currentLocation.setLatitude(current.getLocationLat());
@@ -208,6 +216,7 @@ public class ForegroundService extends Service {
 
             if(distance[0] > current.getLocationRad()) {
                 Log.d("Not in", "location: " + current.getLocationName());
+
             }
             else {
 
@@ -240,5 +249,17 @@ public class ForegroundService extends Service {
 
             }
         }
+    }
+
+    public void createNotification() {
+        Notification locationNotification
+                = new NotificationCompat.Builder(this, CHANNEL_ID2)
+                .setSmallIcon(R.drawable.ic_location_on)
+                .setContentTitle("Hush")
+                .setContentText(curName)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .build();
+
+        notificationManager.notify(2, locationNotification);
     }
 }

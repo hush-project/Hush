@@ -124,6 +124,7 @@ public class AddActivity extends AppCompatActivity
                 address = geocoderService.getAddressFromCoordinates(lat,lng,this);
                 locAddress.setText(address);
 
+
             }
         }
     }
