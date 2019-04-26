@@ -11,15 +11,14 @@ import java.util.Locale;
 
 public class GeocoderService {
 
-    //private Context context;
+    private String address = "";
 
     public GeocoderService (){}
 
     public String getAddressFromCoordinates (double lat, double lng, Context context){
         Geocoder geo = new Geocoder(context, Locale.getDefault());
-        String address="";
         try {
-            List<Address> addresses = geo.getFromLocation(lat,lng,1);
+            List<Address> addresses = geo.getFromLocation(lat, lng,1);
             address = addresses.get(0).getAddressLine(0);
 
         } catch (IOException e) {
