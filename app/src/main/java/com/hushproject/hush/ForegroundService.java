@@ -117,6 +117,7 @@ public class ForegroundService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        notificationManager.cancelAll();
     }
 
     @Nullable
