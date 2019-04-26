@@ -2,7 +2,6 @@ package com.hushproject.hush;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -14,6 +13,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
+
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -24,7 +25,12 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.gson.Gson;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+
+import java.util.Arrays;
 
 public class MapEditActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -45,6 +51,11 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        if(!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(),
+                    getResources().getString(R.string.google_maps_key));
+        }
 
         Bundle openMapEdit = getIntent().getExtras();
 
@@ -85,6 +96,35 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
+
+        setMyLocationLayer();
+
+        // Initialize the AutocompleteSupportFragment.
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+
+        // Specify the types of place data to return.
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID,
+                Place.Field.NAME,
+                Place.Field.LAT_LNG));
+
+        // Set up a PlaceSelectionListener to handle the response.
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                Log.i("placesTag", "Place: " + place.getName() + ", " + place.getId() + ", " + place.getLatLng());
+
+                mMap.moveCamera(CameraUpdateFactory
+                        .newLatLngZoom(new LatLng(place.getLatLng().latitude,
+                                place.getLatLng().longitude), 17.0f));
+            }
+
+            @Override
+            public void onError(Status status) {
+                Log.i("errorTag", "An error occurred: " + status);
+            }
+        });
+
         LatLng circleLatLng = new LatLng(latitude, longitude);
         final SeekBar setRadius = findViewById(R.id.circleRadius);
 
@@ -183,5 +223,24 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
                         }
                     }
                 });
+    }
+
+    public void setMyLocationLayer() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            }
+        } else {
+
+        }
+
+        mMap.setMyLocationEnabled(true);
     }
 }
