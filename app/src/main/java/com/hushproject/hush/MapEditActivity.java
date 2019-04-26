@@ -93,7 +93,7 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
                 .center(circleLatLng)
                 .radius(radius)
                 .strokeColor(Color.DKGRAY)
-                .fillColor(Color.LTGRAY));
+                .fillColor(0x40D6DBDF));
 
         zoomSavedLocation();
 

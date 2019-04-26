@@ -118,6 +118,8 @@ public class AddActivity extends AppCompatActivity
                 lat = data.getDoubleExtra("latitude", 0.0);
                 lng = data.getDoubleExtra("longitude", 0.0);
                 rad = data.getIntExtra("radius", 0);
+
+
             }
         }
     }
