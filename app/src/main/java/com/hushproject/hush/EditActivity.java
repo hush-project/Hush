@@ -25,6 +25,7 @@ public class EditActivity extends AppCompatActivity
     private int ringVolume = 0;
     private int mediVolume = 0;
     private static final int SEND_LOCATION_REQUEST = 1;
+    GeocoderService geocoderService = new GeocoderService();
 
     private AudioManager audioManager;
 
@@ -53,7 +54,7 @@ public class EditActivity extends AppCompatActivity
         Bundle openEdit = getIntent().getExtras();
 
         name = openEdit.getString("cardKey");
-
+        address = openEdit.getString("cardAddress");
         locName.setText(name);
 
         //Convert gson string to object.
@@ -64,11 +65,6 @@ public class EditActivity extends AppCompatActivity
         lat = editLocation.getLocationLat();
         lng = editLocation.getLocationLng();
         rad = editLocation.getLocationRad();
-
-
-        //set text for edit geofence button. Variables need renaming.
-        address = "Tap here to edit your geofence.";
-        locAddress.setText(address);
 
         //initialize volume variables to prevent accidentally setting them to 0.
         ringVolume = editLocation.getLocRingVol();
@@ -144,6 +140,9 @@ public class EditActivity extends AppCompatActivity
                 lat = data.getDoubleExtra("latitude", 0.0);
                 lng = data.getDoubleExtra("longitude", 0.0);
                 rad = data.getIntExtra("radius", 0);
+
+                address = geocoderService.getAddressFromCoordinates(lat,lng,this);
+                locAddress.setText(address);
             }
         }
     }
@@ -151,7 +150,7 @@ public class EditActivity extends AppCompatActivity
     public void saveLoc(View view)
     {
         //Store current values as a UserLocations object.
-        UserLocations saveLocation = new UserLocations(name, lat, lng, rad, ringVolume, mediVolume);
+        UserLocations saveLocation = new UserLocations(name, address, lat, lng, rad, ringVolume, mediVolume);
 
         //Convert to a json string.
         String loc = gson.toJson(saveLocation);

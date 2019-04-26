@@ -3,6 +3,7 @@ package com.hushproject.hush;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Geocoder;
 import android.media.AudioManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,12 +20,14 @@ public class AddActivity extends AppCompatActivity
     private TextView locAddress;
 
     private String name = "";
+    private String address = "";
     private double lat = 0;
     private double lng = 0;
     private int rad = 0;
     private int ringVolume = 0;
     private int mediVolume = 0;
     private static final int SEND_LOCATION_REQUEST = 1;
+    GeocoderService geocoderService = new GeocoderService();
 
     private AudioManager audioManager;
 
@@ -118,6 +121,9 @@ public class AddActivity extends AppCompatActivity
                 lat = data.getDoubleExtra("latitude", 0.0);
                 lng = data.getDoubleExtra("longitude", 0.0);
                 rad = data.getIntExtra("radius", 0);
+                address = geocoderService.getAddressFromCoordinates(lat,lng,this);
+                locAddress.setText(address);
+
             }
         }
     }
@@ -127,7 +133,7 @@ public class AddActivity extends AppCompatActivity
         name = locName.getText().toString();
 
         //Store current values as a UserLocations object
-        UserLocations newLocation = new UserLocations(name, lat, lng, rad, ringVolume, mediVolume);
+        UserLocations newLocation = new UserLocations(name, address, lat, lng, rad, ringVolume, mediVolume);
 
         //Convert to json string.
         String loc = gson.toJson(newLocation);

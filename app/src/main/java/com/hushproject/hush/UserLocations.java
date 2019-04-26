@@ -3,6 +3,10 @@ package com.hushproject.hush;
 public class UserLocations {
 
     private String locationName = "";
+
+
+
+    String locationAddress = "";
     private double locationLat = 0;
     private double locationLng = 0;
     private int locationRad = 0;
@@ -10,14 +14,15 @@ public class UserLocations {
     private int locMediVol = 0;
 
     //constructor.
-    public UserLocations(String name, double lat, double lng, int rad, int ring, int medi) {
+    public UserLocations(String name,String address, double lat, double lng, int rad, int ring, int medi) {
 
-       locationName = name;
-       locationLat = lat;
-       locationLng = lng;
-       locationRad = rad;
-       locRingVol = ring;
-       locMediVol = medi;
+       this.locationName = name;
+       this.locationAddress = address;
+       this.locationLat = lat;
+       this.locationLng = lng;
+       this.locationRad = rad;
+       this.locRingVol = ring;
+       this.locMediVol = medi;
     }
 
     public String getLocationName() {
@@ -43,4 +48,10 @@ public class UserLocations {
     public int getLocMediVol() {
         return locMediVol;
     }
+
+    public String getLocationAddress() {
+        return locationAddress;
+    }
+
+
 }

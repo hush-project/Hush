@@ -28,6 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_weight=".5"
             android:onClick="setAddress"
+            android:hint="@string/location_edit_hint"
             android:paddingLeft="2dp"
             android:paddingRight="2dp"
             android:textSize="18sp" />

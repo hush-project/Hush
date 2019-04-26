@@ -11,4 +11,5 @@
     <string name="bartext_medi">Media</string>
     <string name="location_name_hint">Location name.</string>
     <string name="location_add_hint">Tap here to set a location.</string>
+    <string name="location_edit_hint">Tap here to edit your location.</string>
 </resources>

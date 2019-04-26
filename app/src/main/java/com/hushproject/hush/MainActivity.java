@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter locationAdapter;
 
     private SharedPreferences locPrefs;
+    //SharedPreferences.Editor editor;
 
     private ArrayList<String> locationKeys;
 
@@ -36,6 +37,10 @@ public class MainActivity extends AppCompatActivity {
         locations = new ArrayList<>();
 
         locationKeys = new ArrayList<>();
+
+        //editor = locPrefs.edit();
+        //editor.clear();
+        //editor.commit();
 
         //Get all location keys.
         Map<String, ?> keys = locPrefs.getAll();
