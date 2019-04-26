@@ -22,13 +22,7 @@
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/locLat"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/locLng"
+            android:id="@+id/locAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp" />

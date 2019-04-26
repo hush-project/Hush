@@ -3,14 +3,16 @@ package com.hushproject.hush;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.Geocoder;
 import android.media.AudioManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.gson.Gson;
 
 public class AddActivity extends AppCompatActivity
@@ -33,6 +35,8 @@ public class AddActivity extends AppCompatActivity
 
     private Gson gson = new Gson();
 
+    private SharedPreferences locPrefs;
+
     private SharedPreferences.Editor editor;
 
     @Override
@@ -45,7 +49,7 @@ public class AddActivity extends AppCompatActivity
         audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 
         //Get SharedPreferences.
-        SharedPreferences locPrefs = getSharedPreferences("LocPrefs", MainActivity.MODE_PRIVATE);
+        locPrefs = getSharedPreferences("LocPrefs", MainActivity.MODE_PRIVATE);
         //SharedPreferences editor
         editor = locPrefs.edit();
 
@@ -121,10 +125,8 @@ public class AddActivity extends AppCompatActivity
                 lat = data.getDoubleExtra("latitude", 0.0);
                 lng = data.getDoubleExtra("longitude", 0.0);
                 rad = data.getIntExtra("radius", 0);
-                address = geocoderService.getAddressFromCoordinates(lat,lng,this);
+                address = geocoderService.getAddressFromCoordinates(lat, lng, getApplicationContext());
                 locAddress.setText(address);
-
-
             }
         }
     }
@@ -133,19 +135,29 @@ public class AddActivity extends AppCompatActivity
     {
         name = locName.getText().toString();
 
-        //Store current values as a UserLocations object
-        UserLocations newLocation = new UserLocations(name, address, lat, lng, rad, ringVolume, mediVolume);
+        if(name.isEmpty()) {
+            Toast.makeText(this, "Error: Empty Location Name.",
+                    Toast.LENGTH_SHORT).show();
+        }
+        else if(locPrefs.contains(name)) {
+            Toast.makeText(this, "Error: Duplicate Location Name.",
+                    Toast.LENGTH_SHORT).show();
+        }
+        else {
+            //Store current values as a UserLocations object
+            UserLocations newLocation = new UserLocations(name, address, lat, lng, rad, ringVolume, mediVolume);
 
-        //Convert to json string.
-        String loc = gson.toJson(newLocation);
+            //Convert to json string.
+            String loc = gson.toJson(newLocation);
 
-        //Save json string to preferences.
-        editor.putString(name, loc);
-        editor.commit();
+            //Save json string to preferences.
+            editor.putString(name, loc);
+            editor.commit();
 
-        Intent returnToMain = new Intent(this, MainActivity.class);
-        //kill activity to save memory.
-        returnToMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(returnToMain);
+            Intent returnToMain = new Intent(this, MainActivity.class);
+            //kill activity to save memory.
+            returnToMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(returnToMain);
+        }
     }
 }
