@@ -34,6 +34,8 @@ public class App extends Application {
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(foregroundServiceChannel);
             manager.createNotificationChannel(locationNotificationChannel);
+            foregroundServiceChannel.setShowBadge(false);
+            locationNotificationChannel.setShowBadge(false);
         }
     }
 }
