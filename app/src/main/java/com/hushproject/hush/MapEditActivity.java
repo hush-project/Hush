@@ -24,6 +24,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -41,7 +43,7 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
     private Double longitude;
     private int radius;
     private Circle myCircle;
-
+    private Marker addressMarker;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,6 +119,13 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
                 mMap.moveCamera(CameraUpdateFactory
                         .newLatLngZoom(new LatLng(place.getLatLng().latitude,
                                 place.getLatLng().longitude), 17.0f));
+                if (addressMarker != null)
+                {
+                    addressMarker.remove();
+                }
+                addressMarker = mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(place.getLatLng().latitude, place.getLatLng().longitude))
+                        .title("Address Location."));
             }
 
             @Override

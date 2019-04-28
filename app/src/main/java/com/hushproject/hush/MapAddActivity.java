@@ -27,6 +27,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
@@ -47,6 +48,7 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
     private double curLng;
     private int radius;
     private Circle myCircle;
+    private Marker addressMarker;
 
     private LocationListener listener;
     private LocationManager locationManager;
@@ -112,12 +114,20 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
         // Set up a PlaceSelectionListener to handle the response.
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
-            public void onPlaceSelected(Place place) {
+            public void onPlaceSelected(Place place)
+            {
                 Log.i("placesTag", "Place: " + place.getName() + ", " + place.getId() + ", " + place.getLatLng());
 
                 mMap.moveCamera(CameraUpdateFactory
                         .newLatLngZoom(new LatLng(place.getLatLng().latitude,
                                 place.getLatLng().longitude), 17.0f));
+                if (addressMarker != null)
+                {
+                    addressMarker.remove();
+                }
+                addressMarker = mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(place.getLatLng().latitude, place.getLatLng().longitude))
+                        .title("Address Location."));
             }
 
             @Override
