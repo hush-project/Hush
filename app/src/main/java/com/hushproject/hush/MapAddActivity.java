@@ -151,6 +151,8 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
 
                 latitude = latLng.latitude;
                 longitude = latLng.longitude;
+                Log.d("Latitude", "is: " + latitude);
+                Log.d("Longitude", "is: " + longitude);
                 radius = 5;
                 mMap.setOnCircleClickListener(new GoogleMap.OnCircleClickListener() {
                     @Override
