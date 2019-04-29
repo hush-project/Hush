@@ -113,7 +113,7 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
                     notifyItemRemoved(getAdapterPosition());
                     //use cardKey to remove the sharedpreferences from prefs file.
                     editor.remove(cardKey);
-                    editor.apply();
+                    editor.commit();
                 }
             });
         }

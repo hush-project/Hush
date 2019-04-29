@@ -143,6 +143,8 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
                 .radius(radius)
                 .strokeColor(Color.DKGRAY)
                 .fillColor(0x40D6DBDF));
+                Log.d("Latitude", "is: " + circleLatLng.latitude);
+                Log.d("Longitude", "is: " + circleLatLng.longitude);
 
         zoomSavedLocation();
 
@@ -157,6 +159,8 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
                         .radius(5)
                         .strokeColor(Color.DKGRAY)
                         .fillColor(0x40D6DBDF));
+                Log.d("Latitude", "is: " + latitude);
+                Log.d("Longitude", "is: " + longitude);
 
                 latitude = latLng.latitude;
                 longitude = latLng.longitude;
