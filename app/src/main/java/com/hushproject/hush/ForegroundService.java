@@ -49,7 +49,7 @@ public class ForegroundService extends Service {
     private NotificationManagerCompat notificationManager;
 
     //time interval for the handler in milliseconds.
-    private int interval = 60000;
+    private int interval = 10000;
     //handler for location checking.
     private Handler handler = new Handler(Looper.getMainLooper());
 
@@ -76,8 +76,6 @@ public class ForegroundService extends Service {
                         .getSystemService(Context.LOCATION_SERVICE);
 
         checkGPS();
-        checkLocation();
-        createNotification();
 
         Runnable runnable = new Runnable() {
             @Override
@@ -216,46 +214,40 @@ public class ForegroundService extends Service {
                     current.getLocationLat(), current.getLocationLng(), distance);
 
             if(distance[0] > current.getLocationRad()) {
-                Log.d("Not in", "location: " + current.getLocationName());
+                Log.d("Not in", "location: " + current.getLocationName()
+                        + " " + current.getLocationLat() + " " + current.getLocationLng());
 
             }
             else {
 
-                Log.d("In", "location: " + current.getLocationName());
+                Log.d("In", "location: " + current.getLocationName()
+                        + " "  + current.getLocationLat() + " "+ current.getLocationLng());
 
                 curName = "You are in: " + current.getLocationName();
 
                 int ringVol = current.getLocRingVol();
                 int mediVol = current.getLocMediVol();
 
-                changeVols(ringVol, mediVol);
+                if(ringVol == 0) {
+                    audioManager.adjustStreamVolume(AudioManager.STREAM_RING,
+                            AudioManager.ADJUST_MUTE, 0);
+                }
+                else {
+                    audioManager.adjustStreamVolume(AudioManager.STREAM_RING,
+                            AudioManager.ADJUST_UNMUTE, 0);
+                    audioManager.setStreamVolume(AudioManager.STREAM_RING, ringVol, 0);
+                }
+
+                if(mediVol == 0) {
+                    audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+                            AudioManager.ADJUST_MUTE, 0);
+                }
+                else {
+                    audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+                            AudioManager.ADJUST_UNMUTE, 0);
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mediVol, 0);
+                }
             }
-        }
-    }
-
-    public void changeVols(int ring, int medi) {
-
-        int ringVol = ring;
-        int mediVol = medi;
-
-        if(ringVol == 0) {
-            audioManager.adjustStreamVolume(AudioManager.STREAM_RING,
-                    AudioManager.ADJUST_MUTE, 0);
-        }
-        else {
-            audioManager.adjustStreamVolume(AudioManager.STREAM_RING,
-                    AudioManager.ADJUST_UNMUTE, 0);
-            audioManager.setStreamVolume(AudioManager.STREAM_RING, ringVol, 0);
-        }
-
-        if(mediVol == 0) {
-            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
-                    AudioManager.ADJUST_MUTE, 0);
-        }
-        else {
-            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
-                    AudioManager.ADJUST_UNMUTE, 0);
-            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mediVol, 0);
         }
     }
 
