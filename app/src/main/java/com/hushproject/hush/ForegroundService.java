@@ -137,6 +137,7 @@ public class ForegroundService extends Service {
         return new NotificationCompat.Builder(this, CHANNEL_ID1)
                 .setContentTitle("Hush is running.")
                 .setContentText(text)
+                .setOnlyAlertOnce(true)
                 .setSmallIcon(R.drawable.ic_hush_button)
                 .setContentIntent(pendingIntent)
                 .build();
