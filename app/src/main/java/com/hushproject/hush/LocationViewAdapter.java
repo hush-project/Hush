@@ -22,7 +22,7 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
     private ArrayList<UserLocations> locations;
 
     //default constructor
-    public LocationViewAdapter(ArrayList<UserLocations> i) {
+    LocationViewAdapter(ArrayList<UserLocations> i) {
         locations = i;
     }
 
@@ -55,7 +55,7 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
     }
     //end of required methods for LocationViewAdapter.
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         //Context to access SharedPreferences.
         private Context context;
 
@@ -69,13 +69,10 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
         private TextView locAddress;
         private TextView locRad;
 
-        public ViewHolder(@NonNull final View itemView) {
+        ViewHolder(@NonNull final View itemView) {
             super(itemView);
             //set context to itemView.
             context = itemView.getContext();
-
-            final AudioManager audioManager =
-                    (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 
             locPrefs = context.getSharedPreferences("LocPrefs", Context.MODE_PRIVATE);
             editor = locPrefs.edit();
