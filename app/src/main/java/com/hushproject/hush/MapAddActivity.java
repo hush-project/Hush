@@ -141,46 +141,7 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                googleMap.clear();
-                myCircle = googleMap.addCircle(new CircleOptions()
-                        .clickable(true)
-                        .center(latLng)
-                        .radius(5)
-                        .strokeColor(Color.DKGRAY)
-                        .fillColor(0x40D6DBDF));
-
-                latitude = latLng.latitude;
-                longitude = latLng.longitude;
-                Log.d("Latitude", "is: " + latitude);
-                Log.d("Longitude", "is: " + longitude);
-                radius = 5;
-                mMap.setOnCircleClickListener(new GoogleMap.OnCircleClickListener() {
-                    @Override
-                    public void onCircleClick(Circle circle) {
-                        setRadius.setVisibility(View.VISIBLE);
-                        setRadius.setProgress((int) myCircle.getRadius());
-                        setRadius.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                            @Override
-                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                                myCircle.setRadius(progress);
-                                radius = progress;
-                                if(progress == 0) {
-                                    myCircle.remove();
-                                }
-                            }
-
-                            @Override
-                            public void onStartTrackingTouch(SeekBar seekBar) {
-
-                            }
-
-                            @Override
-                            public void onStopTrackingTouch(SeekBar seekBar) {
-                                setRadius.setVisibility(View.GONE);
-                            }
-                        });
-                    }
-                });
+                createCircle(googleMap, latLng, setRadius);
             }
         });
     }
@@ -278,5 +239,44 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
         }
 
         mMap.setMyLocationEnabled(true);
+    }
+
+    public void createCircle(GoogleMap map, LatLng latLng, SeekBar seekBar) {
+        map.clear();
+        myCircle = map.addCircle(new CircleOptions()
+                .clickable(true)
+                .center(latLng)
+                .radius(5)
+                .strokeColor(Color.DKGRAY)
+                .fillColor(0x40D6DBDF));
+
+        latitude = latLng.latitude;
+        longitude = latLng.longitude;
+        Log.d("Latitude", "is: " + latitude);
+        Log.d("Longitude", "is: " + longitude);
+        radius = 5;
+        seekBar.setVisibility(View.VISIBLE);
+        seekBar.setProgress((int) myCircle.getRadius());
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                myCircle.setRadius(progress);
+                radius = progress;
+                if(progress == 0) {
+                    myCircle.remove();
+                    seekBar.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
 }

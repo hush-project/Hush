@@ -98,6 +98,8 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
                     //send information to edit activity.
                     openEdit.putExtra("cardKey", cardKey);
                     openEdit.putExtra("cardAddress", cardAddress);
+                    openEdit.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     context.startActivity(openEdit);
                 }
             });

@@ -164,4 +164,11 @@ public class EditActivity extends AppCompatActivity
         returnToMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(returnToMain);
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent backToMain = new Intent(this, MainActivity.class);
+        backToMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(backToMain);
+    }
 }

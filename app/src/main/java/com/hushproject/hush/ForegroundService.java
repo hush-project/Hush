@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import static com.hushproject.hush.App.CHANNEL_ID1;
-import static com.hushproject.hush.App.CHANNEL_ID2;
 
 public class ForegroundService extends Service {
 
@@ -41,6 +40,7 @@ public class ForegroundService extends Service {
     private Gson gson = new Gson();
 
     private String curName;
+    private final String startText = "Hush is listening for a location.";
     private double curLat;
     private double curLng;
 
@@ -48,8 +48,10 @@ public class ForegroundService extends Service {
 
     private NotificationManagerCompat notificationManager;
 
+    //initial time interval for the handler in milliseconds.
+    private int startInterval = 10000;
     //time interval for the handler in milliseconds.
-    private int interval = 10000;
+    private int interval = 60000;
     //handler for location checking.
     private Handler handler = new Handler(Looper.getMainLooper());
 
@@ -68,51 +70,44 @@ public class ForegroundService extends Service {
         //NotificationManager declaration
         notificationManager = NotificationManagerCompat.from(this);
 
+        //create gps listener and get shared preferences.
         createGPSListener();
         getSharedPrefs();
 
+        //set up the location manager.
         locationManager =
                 (LocationManager) getApplicationContext()
                         .getSystemService(Context.LOCATION_SERVICE);
 
         checkGPS();
 
+        //This is the runnable that allows the service to periodically check the user's location
+        //and change their volume/update their location in the foreground notification.
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 checkGPS();
                 checkLocation();
-                createNotification();
 
+                //runs again after x milliseconds
                 handler.postDelayed(this, interval);
             }
         };
 
-        handler.postDelayed(runnable, interval);
+        //initial command to run the handler after x milliseconds.
+        handler.postDelayed(runnable, startInterval);
     }
 
-    //this sets up the foreground notification for the app.
+    //this method runs when MainActivity makes a call to start the service.
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,
-                0, notificationIntent, 0);
-
-        //the foreground notification.
-        Notification notification
-                = new NotificationCompat.Builder(this, CHANNEL_ID1)
-                .setContentTitle("Hush is running.")
-                .setSmallIcon(R.drawable.ic_hush_button)
-                .setContentIntent(pendingIntent)
-                .build();
-
-        startForeground(1, notification);
+        startForeground();
 
         return START_REDELIVER_INTENT;
     }
 
+    //standard onDestroy method. Cancels all notifications when service is destroyed.
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -123,6 +118,36 @@ public class ForegroundService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    //starts the foreground notification. This is private as we do not want anything but the
+    //foreground service being able to start the foreground notification.
+    private void startForeground()  {
+
+        startForeground(1, foregroundNotification(startText));
+    }
+
+    //builds the foreground notification.
+    public Notification foregroundNotification(String text) {
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                0, notificationIntent, 0);
+
+        return new NotificationCompat.Builder(this, CHANNEL_ID1)
+                .setContentTitle("Hush is running.")
+                .setContentText(text)
+                .setOnlyAlertOnce(true)
+                .setSmallIcon(R.drawable.ic_hush_button)
+                .setContentIntent(pendingIntent)
+                .build();
+    }
+
+    //Updates the text on the foreground notification to display which location the user is in.
+    public void updateNotification(String text) {
+        Notification notification = foregroundNotification(text);
+
+        notificationManager.notify(1, notification);
     }
 
     //method for fetching sharedprefs.
@@ -228,38 +253,38 @@ public class ForegroundService extends Service {
                 int ringVol = current.getLocRingVol();
                 int mediVol = current.getLocMediVol();
 
-                if(ringVol == 0) {
-                    audioManager.adjustStreamVolume(AudioManager.STREAM_RING,
-                            AudioManager.ADJUST_MUTE, 0);
-                }
-                else {
-                    audioManager.adjustStreamVolume(AudioManager.STREAM_RING,
-                            AudioManager.ADJUST_UNMUTE, 0);
-                    audioManager.setStreamVolume(AudioManager.STREAM_RING, ringVol, 0);
-                }
+                updateNotification(curName);
 
-                if(mediVol == 0) {
-                    audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
-                            AudioManager.ADJUST_MUTE, 0);
-                }
-                else {
-                    audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
-                            AudioManager.ADJUST_UNMUTE, 0);
-                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mediVol, 0);
-                }
+                changeVols(ringVol, mediVol);
+
             }
         }
     }
 
-    public void createNotification() {
-        Notification locationNotification
-                = new NotificationCompat.Builder(this, CHANNEL_ID2)
-                .setSmallIcon(R.drawable.ic_location_on)
-                .setContentTitle("Hush")
-                .setContentText(curName)
-                .setPriority(NotificationCompat.PRIORITY_LOW)
-                .build();
+    //method for changing phone volumes.
+    public void changeVols(int ring, int medi) {
+        int ringVol = ring;
+        int mediVol = medi;
 
-        notificationManager.notify(2, locationNotification);
+        if(ringVol == 0) {
+            audioManager.adjustStreamVolume(AudioManager.STREAM_RING,
+                    AudioManager.ADJUST_MUTE, 0);
+        }
+        else {
+            audioManager.adjustStreamVolume(AudioManager.STREAM_RING,
+                    AudioManager.ADJUST_UNMUTE, 0);
+            audioManager.setStreamVolume(AudioManager.STREAM_RING, ringVol, 0);
+        }
+
+        if(mediVol == 0) {
+            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+                    AudioManager.ADJUST_MUTE, 0);
+        }
+        else {
+            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+                    AudioManager.ADJUST_UNMUTE, 0);
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mediVol, 0);
+        }
     }
+
 }
