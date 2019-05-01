@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void add(View view) {
         Intent openAdd = new Intent(this, AddActivity.class);
+        openAdd.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(openAdd);
     }
 }

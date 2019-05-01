@@ -8,7 +8,6 @@ import android.os.Build;
 public class App extends Application {
 
     public static final String CHANNEL_ID1 = "foregroundServiceChannel";
-    public static final String CHANNEL_ID2 = "locationNotificationChannel";
 
     @Override
     public void onCreate() {
@@ -25,17 +24,9 @@ public class App extends Application {
                     NotificationManager.IMPORTANCE_DEFAULT
             );
 
-            NotificationChannel locationNotificationChannel = new NotificationChannel(
-                    CHANNEL_ID2,
-                    "Location Notification Channel",
-                    NotificationManager.IMPORTANCE_LOW
-            );
-
             foregroundServiceChannel.setShowBadge(false);
-            locationNotificationChannel.setShowBadge(false);
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(foregroundServiceChannel);
-            manager.createNotificationChannel(locationNotificationChannel);
         }
     }
 }

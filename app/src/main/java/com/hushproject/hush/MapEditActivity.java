@@ -137,65 +137,57 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
         LatLng circleLatLng = new LatLng(latitude, longitude);
         final SeekBar setRadius = findViewById(R.id.circleRadius);
 
-        myCircle = googleMap.addCircle(new CircleOptions()
-                .clickable(true)
-                .center(circleLatLng)
-                .radius(radius)
-                .strokeColor(Color.DKGRAY)
-                .fillColor(0x40D6DBDF));
-                Log.d("Latitude", "is: " + circleLatLng.latitude);
-                Log.d("Longitude", "is: " + circleLatLng.longitude);
+        //load saved circle.
+        loadSavedCircle(googleMap, circleLatLng);
 
         zoomSavedLocation();
 
+        setRadius.setVisibility(View.VISIBLE);
+        setRadius.setProgress((int) myCircle.getRadius());
+        setRadius.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                myCircle.setRadius(progress);
+                radius = progress;
+                if(progress == 0) {
+                    myCircle.remove();
+                    setRadius.setVisibility(View.GONE);
+
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                googleMap.clear();
-                myCircle = googleMap.addCircle(new CircleOptions()
-                        .clickable(true)
-                        .center(latLng)
-                        .radius(5)
-                        .strokeColor(Color.DKGRAY)
-                        .fillColor(0x40D6DBDF));
-                Log.d("Latitude", "is: " + latitude);
-                Log.d("Longitude", "is: " + longitude);
+                createNewCircle(googleMap, latLng, setRadius);
 
-                latitude = latLng.latitude;
-                longitude = latLng.longitude;
             }
         });
 
-        mMap.setOnCircleClickListener(new GoogleMap.OnCircleClickListener() {
-            @Override
-            public void onCircleClick(Circle circle) {
-                setRadius.setVisibility(View.VISIBLE);
-                setRadius.setProgress((int) myCircle.getRadius());
-                setRadius.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                        myCircle.setRadius(progress);
-                        radius = progress;
-                        if(progress == 0) {
-                            myCircle.remove();
+    }
 
-                        }
-                    }
+    public void loadSavedCircle(GoogleMap map, LatLng latLng) {
+        //load saved circle.
+        myCircle = map.addCircle(new CircleOptions()
+                .clickable(true)
+                .center(latLng)
+                .radius(radius)
+                .strokeColor(Color.DKGRAY)
+                .fillColor(0x40D6DBDF));
+        Log.d("Latitude", "is: " + latLng.latitude);
+        Log.d("Longitude", "is: " + latLng.longitude);
 
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-
-                    }
-
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-                        setRadius.setVisibility(View.GONE);
-
-                    }
-                });
-            }
-        });
     }
 
     public void zoomSavedLocation() {
@@ -236,6 +228,46 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
                         }
                     }
                 });
+    }
+
+    public void createNewCircle(GoogleMap map, LatLng latLng, SeekBar seekBar) {
+        map.clear();
+        myCircle = map.addCircle(new CircleOptions()
+                .clickable(true)
+                .center(latLng)
+                .radius(5)
+                .strokeColor(Color.DKGRAY)
+                .fillColor(0x40D6DBDF));
+        Log.d("Latitude", "is: " + latitude);
+        Log.d("Longitude", "is: " + longitude);
+
+        latitude = latLng.latitude;
+        longitude = latLng.longitude;
+
+        seekBar.setVisibility(View.VISIBLE);
+        seekBar.setProgress((int) myCircle.getRadius());
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                myCircle.setRadius(progress);
+                radius = progress;
+                if(progress == 0) {
+                    myCircle.remove();
+                    seekBar.setVisibility(View.GONE);
+
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
 
     public void setMyLocationLayer() {
