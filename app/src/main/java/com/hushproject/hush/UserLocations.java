@@ -1,20 +1,17 @@
 package com.hushproject.hush;
 
-public class UserLocations {
+class UserLocations {
 
-    private String locationName = "";
-
-
-
-    String locationAddress = "";
-    private double locationLat = 0;
-    private double locationLng = 0;
-    private int locationRad = 0;
-    private int locRingVol = 0;
-    private int locMediVol = 0;
+    private String locationName;
+    private String locationAddress;
+    private double locationLat;
+    private double locationLng;
+    private int locationRad;
+    private int locRingVol;
+    private int locMediVol;
 
     //constructor.
-    public UserLocations(String name,String address, double lat, double lng, int rad, int ring, int medi) {
+    UserLocations(String name,String address, double lat, double lng, int rad, int ring, int medi) {
 
        this.locationName = name;
        this.locationAddress = address;
@@ -25,31 +22,31 @@ public class UserLocations {
        this.locMediVol = medi;
     }
 
-    public String getLocationName() {
+    String getLocationName() {
         return locationName;
     }
 
-    public double getLocationLat() {
+    double getLocationLat() {
         return locationLat;
     }
 
-    public double getLocationLng() {
+    double getLocationLng() {
         return locationLng;
     }
 
-    public int getLocationRad() {
+    int getLocationRad() {
         return locationRad;
     }
 
-    public int getLocRingVol() {
+    int getLocRingVol() {
         return locRingVol;
     }
 
-    public int getLocMediVol() {
+    int getLocMediVol() {
         return locMediVol;
     }
 
-    public String getLocationAddress() {
+    String getLocationAddress() {
         return locationAddress;
     }
 

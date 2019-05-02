@@ -48,10 +48,6 @@ public class ForegroundService extends Service {
 
     private NotificationManagerCompat notificationManager;
 
-    //initial time interval for the handler in milliseconds.
-    private int startInterval = 10000;
-    //time interval for the handler in milliseconds.
-    private int interval = 60000;
     //handler for location checking.
     private Handler handler = new Handler(Looper.getMainLooper());
 
@@ -79,23 +75,23 @@ public class ForegroundService extends Service {
                 (LocationManager) getApplicationContext()
                         .getSystemService(Context.LOCATION_SERVICE);
 
-        checkGPS();
+        requestLocationUpdate();
 
         //This is the runnable that allows the service to periodically check the user's location
         //and change their volume/update their location in the foreground notification.
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                checkGPS();
+                requestLocationUpdate();
                 checkLocation();
 
                 //runs again after x milliseconds
-                handler.postDelayed(this, interval);
+                handler.postDelayed(this, 60000);
             }
         };
 
         //initial command to run the handler after x milliseconds.
-        handler.postDelayed(runnable, startInterval);
+        handler.postDelayed(runnable, 10000);
     }
 
     //this method runs when MainActivity makes a call to start the service.
@@ -198,15 +194,14 @@ public class ForegroundService extends Service {
     }
 
     //method for getting location updates.
-    public void checkGPS() {
+    public void requestLocationUpdate() {
         if (ActivityCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-
-            return;
+            Log.d("Permission", " not granted.");
         }
         else {
             locationManager
@@ -259,31 +254,31 @@ public class ForegroundService extends Service {
 
             }
         }
+
+
     }
 
     //method for changing phone volumes.
     public void changeVols(int ring, int medi) {
-        int ringVol = ring;
-        int mediVol = medi;
 
-        if(ringVol == 0) {
+        if(ring == 0) {
             audioManager.adjustStreamVolume(AudioManager.STREAM_RING,
                     AudioManager.ADJUST_MUTE, 0);
         }
         else {
             audioManager.adjustStreamVolume(AudioManager.STREAM_RING,
                     AudioManager.ADJUST_UNMUTE, 0);
-            audioManager.setStreamVolume(AudioManager.STREAM_RING, ringVol, 0);
+            audioManager.setStreamVolume(AudioManager.STREAM_RING, ring, 0);
         }
 
-        if(mediVol == 0) {
+        if(medi == 0) {
             audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
                     AudioManager.ADJUST_MUTE, 0);
         }
         else {
             audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
                     AudioManager.ADJUST_UNMUTE, 0);
-            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mediVol, 0);
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, medi, 0);
         }
     }
 
