@@ -24,6 +24,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.hushproject.hush.App.CHANNEL_ID1;
@@ -221,6 +222,8 @@ public class ForegroundService extends Service {
     public void checkLocation() {
         UserLocations current;
 
+        String locObj = "";
+
         Location currentLocation = new Location(LocationManager.GPS_PROVIDER);
 
         float[] distance = new float[1];
@@ -233,28 +236,36 @@ public class ForegroundService extends Service {
             Location.distanceBetween(curLat, curLng,
                     current.getLocationLat(), current.getLocationLng(), distance);
 
-            if(distance[0] > current.getLocationRad()) {
-                Log.d("Not in", "location: " + current.getLocationName()
-                        + " " + current.getLocationLat() + " " + current.getLocationLng());
+            if(distance[0] < current.getLocationRad()) {
+
+                locObj = locPrefs.getString(locationKeys.get(i), "");
 
             }
             else {
 
-                Log.d("In", "location: " + current.getLocationName()
-                        + " "  + current.getLocationLat() + " "+ current.getLocationLng());
-
-                curName = "You are in: " + current.getLocationName();
-
-                int ringVol = current.getLocRingVol();
-                int mediVol = current.getLocMediVol();
-
-                updateNotification(curName);
-
-                changeVols(ringVol, mediVol);
-
             }
         }
 
+        UserLocations activeLocation = gson.fromJson(locObj, UserLocations.class);
+
+        if(!locObj.equalsIgnoreCase("")) {
+
+            Log.d("In", "location: " + activeLocation.getLocationName()
+                    + " "  + activeLocation.getLocationLat() + " "+ activeLocation.getLocationLng());
+
+            curName = "You are in: " + activeLocation.getLocationName();
+
+            int ringVol = activeLocation.getLocRingVol();
+            int mediVol = activeLocation.getLocMediVol();
+
+            updateNotification(curName);
+
+            changeVols(ringVol, mediVol);
+        }
+        else  {
+
+            updateNotification(startText);
+        }
 
     }
 
