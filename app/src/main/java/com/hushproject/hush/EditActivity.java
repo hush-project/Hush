@@ -141,7 +141,11 @@ public class EditActivity extends AppCompatActivity
                 lng = data.getDoubleExtra("longitude", 0.0);
                 rad = data.getIntExtra("radius", 0);
 
-                address = geocoderService.getAddressFromCoordinates(lat,lng,this);
+                try {
+                    address = geocoderService.getAddressFromCoordinates(lat,lng,this);
+                } catch(Exception e) {
+                    address = "Location is unknown.";
+                }
                 locAddress.setText(address);
             }
         }

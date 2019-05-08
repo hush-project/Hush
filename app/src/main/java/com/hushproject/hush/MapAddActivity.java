@@ -250,8 +250,9 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
                 .strokeColor(Color.DKGRAY)
                 .fillColor(0x40D6DBDF));
 
-        latitude = latLng.latitude;
-        longitude = latLng.longitude;
+        latitude = (Math.round(latLng.latitude*1000000.0) / 1000000.0);
+        longitude = (Math.round(latLng.longitude*1000000.0) / 1000000.0);
+
         Log.d("Latitude", "is: " + latitude);
         Log.d("Longitude", "is: " + longitude);
         radius = 5;
