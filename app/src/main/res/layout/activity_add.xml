@@ -21,6 +21,7 @@
             android:hint="@string/location_name_hint"
             android:inputType="textPersonName"
             android:paddingLeft="2dp"
+            android:maxLength="20"
             android:paddingRight="2dp" />
 
         <TextView
