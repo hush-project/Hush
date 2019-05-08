@@ -23,8 +23,8 @@ public class AddActivity extends AppCompatActivity
 
     private String name = "";
     private String address = "";
-    private double lat = 0;
-    private double lng = 0;
+    private double lat = 0.0;
+    private double lng = 0.0;
     private int rad = 0;
     private int ringVolume = 0;
     private int mediVolume = 0;
@@ -125,7 +125,11 @@ public class AddActivity extends AppCompatActivity
                 lat = data.getDoubleExtra("latitude", 0.0);
                 lng = data.getDoubleExtra("longitude", 0.0);
                 rad = data.getIntExtra("radius", 0);
-                address = geocoderService.getAddressFromCoordinates(lat, lng, getApplicationContext());
+                try {
+                    address = geocoderService.getAddressFromCoordinates(lat, lng, getApplicationContext());
+                } catch(Exception e) {
+                    address = "Location is unknown.";
+                }
                 locAddress.setText(address);
             }
         }

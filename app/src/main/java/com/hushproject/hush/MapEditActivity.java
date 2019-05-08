@@ -241,8 +241,8 @@ public class MapEditActivity extends FragmentActivity implements OnMapReadyCallb
         Log.d("Latitude", "is: " + latitude);
         Log.d("Longitude", "is: " + longitude);
 
-        latitude = latLng.latitude;
-        longitude = latLng.longitude;
+        latitude = (Math.round(latLng.latitude*1000000.0) / 1000000.0);
+        longitude = (Math.round(latLng.longitude*1000000.0) / 1000000.0);
 
         seekBar.setVisibility(View.VISIBLE);
         seekBar.setProgress((int) myCircle.getRadius());
