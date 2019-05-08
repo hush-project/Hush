@@ -43,9 +43,9 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
         final UserLocations currentLoc = locations.get(i);
         //set name of currentLoc to name textview.
         viewHolder.locTitle.setText(currentLoc.getLocationName()); // Do NOT Change/Edit the name!
-        viewHolder.locAddress.setText("Address: " + currentLoc.getLocationAddress());
+        viewHolder.locAddress.setText(currentLoc.getLocationAddress());
         //set coordinates in textviews
-        viewHolder.locRad.setText("Radius: " + Double.toString(currentLoc.getLocationRad()) + " meters");
+        viewHolder.locRad.setText(Double.toString(currentLoc.getLocationRad()) + " meter radius.");
     }
 
     @Override

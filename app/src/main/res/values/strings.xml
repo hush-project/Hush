@@ -9,6 +9,8 @@
     <string name="button_send">Send Location</string>
     <string name="bartext_ring">Ringtone</string>
     <string name="bartext_medi">Media</string>
+    <string name="address_title">Address</string>
+    <string name="radius_title">Radius</string>
     <string name="location_name_hint">Location name.</string>
     <string name="location_add_hint">Tap here to set a location.</string>
     <string name="location_edit_hint">Tap here to edit your location.</string>
