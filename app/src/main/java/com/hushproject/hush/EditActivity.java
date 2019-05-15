@@ -127,6 +127,7 @@ public class EditActivity extends AppCompatActivity
     {
 
         Intent openMapEdit = new Intent(this, MapEditActivity.class);
+        openMapEdit.putExtra("name", name);
         openMapEdit.putExtra("lati", lat);
         openMapEdit.putExtra("long", lng);
         openMapEdit.putExtra("rad", rad);

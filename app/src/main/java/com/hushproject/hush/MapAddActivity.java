@@ -3,6 +3,7 @@ package com.hushproject.hush;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -34,8 +36,11 @@ import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 
 public class MapAddActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -53,6 +58,11 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
     private LocationListener listener;
     private LocationManager locationManager;
 
+    private SharedPreferences locPrefs;
+    private ArrayList<String> locationKeys;
+    private ArrayList<UserLocations> locations;
+    private Gson gson = new Gson();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +71,13 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        //Create SharedPreferences
+        locPrefs = getSharedPreferences("LocPrefs", MODE_PRIVATE);
+        locationKeys = new ArrayList<>();
+        locations = new ArrayList<>();
+
+        getSharedPrefs();
 
         if(!Places.isInitialized()) {
             Places.initialize(getApplicationContext(),
@@ -78,16 +95,42 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("Latitude is: ", "" + latitude);
-                Log.d("Longitude is: ", "" + longitude);
-                Log.d("Radius is: ", "" + radius);
+            UserLocations current;
+            boolean overLap = false;
+            float[] distance = new float[1];
 
-                Intent i = getIntent();
-                i.putExtra("latitude", latitude);
-                i.putExtra("longitude", longitude);
-                i.putExtra("radius", radius);
-                setResult(RESULT_OK, i);
-                finish();
+                for(int i = 0; i < locations.size(); i++) {
+                    current = locations.get(i);
+
+                    Location.distanceBetween(latitude, longitude,
+                            current.getLocationLat(), current.getLocationLng(), distance);
+
+                    int curRadius = current.getLocationRad();
+                    int sumRadius = curRadius + radius;
+
+                    if(distance[0] < sumRadius) {
+                        overLap = true;
+                    }
+
+                }
+
+                if(overLap == true) {
+                    Toast.makeText(getApplicationContext(),
+                            "Error: Location overlaps an existing location.",
+                            Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Log.d("Latitude is: ", "" + latitude);
+                    Log.d("Longitude is: ", "" + longitude);
+                    Log.d("Radius is: ", "" + radius);
+
+                    Intent i = getIntent();
+                    i.putExtra("latitude", latitude);
+                    i.putExtra("longitude", longitude);
+                    i.putExtra("radius", radius);
+                    setResult(RESULT_OK, i);
+                    finish();
+                }
             }
         });
 
@@ -279,5 +322,26 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
 
             }
         });
+    }
+
+    //method for fetching sharedprefs.
+    public void getSharedPrefs() {
+        locationKeys.clear();
+        locations.clear();
+        //Get all location keys.
+        Map<String, ?> keys = locPrefs.getAll();
+        for (Map.Entry<String, ?> entries : keys.entrySet()) {
+            locationKeys.add(entries.getKey());
+        }
+
+        //Convert all json strings back into UserLocations.
+        for (int i = 0; i < locationKeys.size(); i++) {
+            //find object using key.
+            String savedLoc = locPrefs.getString(locationKeys.get(i), "");
+            //convert json string back to object.
+            UserLocations savedLocation = gson.fromJson(savedLoc, UserLocations.class);
+            //add recovered object to locations ArrayList.
+            locations.add(savedLocation);
+        }
     }
 }
