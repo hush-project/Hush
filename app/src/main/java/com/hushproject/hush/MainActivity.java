@@ -14,16 +14,6 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView locationView;
-    private RecyclerView.Adapter locationAdapter;
-
-    private SharedPreferences locPrefs;
-    //SharedPreferences.Editor editor;
-
-    private ArrayList<String> locationKeys;
-
-    private ArrayList<UserLocations> locations;
-
     private Gson gson = new Gson();
 
     @Override
@@ -32,15 +22,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //Create SharedPreferences
-        locPrefs = getSharedPreferences("LocPrefs", MODE_PRIVATE);
+        SharedPreferences locPrefs = getSharedPreferences("LocPrefs", MODE_PRIVATE);
 
-        locations = new ArrayList<>();
+        ArrayList<UserLocations> locations = new ArrayList<>();
 
-        locationKeys = new ArrayList<>();
-
-        //editor = locPrefs.edit();
-        //editor.clear();
-        //editor.commit();
+        ArrayList<String> locationKeys = new ArrayList<>();
 
         //Get all location keys.
         Map<String, ?> keys = locPrefs.getAll();
@@ -61,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
         startService();
 
         //LocationViewAdapter
-        locationAdapter = new LocationViewAdapter(locations);
-        locationView = findViewById(R.id.locationViewer);
+        RecyclerView.Adapter locationAdapter = new LocationViewAdapter(locations);
+        RecyclerView locationView = findViewById(R.id.locationViewer);
         locationView.setAdapter(locationAdapter);
         locationView.setLayoutManager(new LinearLayoutManager(this));
     }

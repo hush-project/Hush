@@ -44,9 +44,6 @@ public class StartActivity extends AppCompatActivity {
                         permissions, PERMISSIONS);
             }
         }
-        else {
-
-        }
     }
 
     public void toMainActivity(View view)

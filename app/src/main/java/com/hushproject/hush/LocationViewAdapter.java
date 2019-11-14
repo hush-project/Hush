@@ -4,15 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
-
 import android.support.v7.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 
 public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapter.ViewHolder> {
@@ -58,12 +55,6 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
         //Context to access SharedPreferences.
         private Context context;
 
-        private SharedPreferences locPrefs;
-        private SharedPreferences.Editor editor;
-
-        private Button editButton;
-        private Button deleteButton;
-
         private TextView locTitle;
         private TextView locAddress;
         private TextView locRad;
@@ -73,52 +64,45 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
             //set context to itemView.
             context = itemView.getContext();
 
-            locPrefs = context.getSharedPreferences("LocPrefs", Context.MODE_PRIVATE);
-            editor = locPrefs.edit();
+            SharedPreferences locPrefs = context.getSharedPreferences("LocPrefs", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = locPrefs.edit();
 
             locTitle = itemView.findViewById(R.id.locTitle);
             locAddress = itemView.findViewById(R.id.locAddress);
             locRad = itemView.findViewById(R.id.locRad);
-            editButton = itemView.findViewById(R.id.editBtn);
-            deleteButton = itemView.findViewById(R.id.delBtn);
+            Button editButton = itemView.findViewById(R.id.editBtn);
+            Button deleteButton = itemView.findViewById(R.id.delBtn);
 
             //onClick listener for our edit button.
-            editButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //Get locTitle.
-                    String cardKey = locTitle.getText().toString();
-                    String cardAddress = locAddress.getText().toString();
-                    //open Edit activity.
-                    Intent openEdit = new Intent(context, EditActivity.class);
-                    //send information to edit activity.
-                    openEdit.putExtra("cardKey", cardKey);
-                    openEdit.putExtra("cardAddress", cardAddress);
-                    openEdit.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                            | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    context.startActivity(openEdit);
-                }
+            editButton.setOnClickListener(v -> {
+                //Get locTitle.
+                String cardKey = locTitle.getText().toString();
+                String cardAddress = locAddress.getText().toString();
+                //open Edit activity.
+                Intent openEdit = new Intent(context, EditActivity.class);
+                //send information to edit activity.
+                openEdit.putExtra("cardKey", cardKey);
+                openEdit.putExtra("cardAddress", cardAddress);
+                openEdit.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                context.startActivity(openEdit);
             });
 
             //onClick listener for our delete button.
-            deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //Get locTitle.
-                    String cardKey = locTitle.getText().toString();
-                    //remove card from recyclerview.
-                    locations.remove(getAdapterPosition());
-                    notifyItemRemoved(getAdapterPosition());
-                    //use cardKey to remove the sharedpreferences from prefs file.
-                    editor.remove(cardKey);
-                    editor.commit();
+            deleteButton.setOnClickListener(v -> {
+                //Get locTitle.
+                String cardKey = locTitle.getText().toString();
+                //remove card from recyclerview.
+                locations.remove(getAdapterPosition());
+                notifyItemRemoved(getAdapterPosition());
+                //use cardKey to remove the sharedpreferences from prefs file.
+                editor.remove(cardKey);
+                editor.commit();
 
-                    Intent restartService = new Intent(context, ForegroundService.class);
-                    context.stopService(restartService);
-                    context.startService(restartService);
-                }
+                Intent restartService = new Intent(context, ForegroundService.class);
+                context.stopService(restartService);
+                context.startService(restartService);
             });
         }
     }
-
 }

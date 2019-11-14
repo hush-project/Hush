@@ -18,7 +18,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.Toast;
-
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -31,7 +30,6 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
@@ -92,45 +90,42 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
 
         Button send = findViewById(R.id.sendBtn);
 
-        send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            UserLocations current;
-            boolean overLap = false;
-            float[] distance = new float[1];
+        send.setOnClickListener(v -> {
+        UserLocations current;
+        boolean overLap = false;
+        float[] distance = new float[1];
 
-                for(int i = 0; i < locations.size(); i++) {
-                    current = locations.get(i);
+            for(int i = 0; i < locations.size(); i++) {
+                current = locations.get(i);
 
-                    Location.distanceBetween(latitude, longitude,
-                            current.getLocationLat(), current.getLocationLng(), distance);
+                Location.distanceBetween(latitude, longitude,
+                        current.getLocationLat(), current.getLocationLng(), distance);
 
-                    int curRadius = current.getLocationRad();
-                    int sumRadius = curRadius + radius;
+                int curRadius = current.getLocationRad();
+                int sumRadius = curRadius + radius;
 
-                    if(distance[0] < sumRadius) {
-                        overLap = true;
-                    }
-
+                if(distance[0] < sumRadius) {
+                    overLap = true;
                 }
 
-                if(overLap == true) {
-                    Toast.makeText(getApplicationContext(),
-                            "Error: Location overlaps an existing location.",
-                            Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Log.d("Latitude is: ", "" + latitude);
-                    Log.d("Longitude is: ", "" + longitude);
-                    Log.d("Radius is: ", "" + radius);
+            }
 
-                    Intent i = getIntent();
-                    i.putExtra("latitude", latitude);
-                    i.putExtra("longitude", longitude);
-                    i.putExtra("radius", radius);
-                    setResult(RESULT_OK, i);
-                    finish();
-                }
+            if(overLap) {
+                Toast.makeText(getApplicationContext(),
+                        "Error: Location overlaps an existing location.",
+                        Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Log.d("Latitude is: ", "" + latitude);
+                Log.d("Longitude is: ", "" + longitude);
+                Log.d("Radius is: ", "" + radius);
+
+                Intent i = getIntent();
+                i.putExtra("latitude", latitude);
+                i.putExtra("longitude", longitude);
+                i.putExtra("radius", radius);
+                setResult(RESULT_OK, i);
+                finish();
             }
         });
 
@@ -181,12 +176,7 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
 
         getLastLocation();
 
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                createCircle(googleMap, latLng, setRadius);
-            }
-        });
+        mMap.setOnMapClickListener(latLng -> createCircle(googleMap, latLng, setRadius));
     }
 
     public void getLastLocation() {
@@ -201,8 +191,6 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
             }
-        } else {
-
         }
 
         locationManager
@@ -212,29 +200,26 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
                         listener);
 
         fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            if(latitude == 0.0 && longitude == 0.0) {
-                                Log.d("Location is", "" + location);
-                                mMap.moveCamera(CameraUpdateFactory
-                                        .newLatLngZoom(new LatLng(location.getLatitude(),
-                                                location.getLongitude()), 17.0f));
-                            }
-                            else {
-                                location.setLatitude(curLat);
-                                location.setLongitude(curLng);
-                                Log.d("Location is", "" + location);
-                                mMap.moveCamera(CameraUpdateFactory
-                                        .newLatLngZoom(new LatLng(location.getLatitude(),
-                                                location.getLongitude()), 17.0f));
-                                mMap.addMarker(new MarkerOptions()
-                                    .position(new LatLng(curLat, curLng))
-                                    .title("You are here.")
-                                );
-                            }
+                .addOnSuccessListener(this, location -> {
+                    // Got last known location. In some rare situations this can be null.
+                    if (location != null) {
+                        if(latitude == 0.0 && longitude == 0.0) {
+                            Log.d("Location is", "" + location);
+                            mMap.moveCamera(CameraUpdateFactory
+                                    .newLatLngZoom(new LatLng(location.getLatitude(),
+                                            location.getLongitude()), 17.0f));
+                        }
+                        else {
+                            location.setLatitude(curLat);
+                            location.setLongitude(curLng);
+                            Log.d("Location is", "" + location);
+                            mMap.moveCamera(CameraUpdateFactory
+                                    .newLatLngZoom(new LatLng(location.getLatitude(),
+                                            location.getLongitude()), 17.0f));
+                            mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(curLat, curLng))
+                                .title("You are here.")
+                            );
                         }
                     }
                 });
@@ -277,8 +262,6 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
             }
-        } else {
-
         }
 
         mMap.setMyLocationEnabled(true);
@@ -324,7 +307,7 @@ public class MapAddActivity extends FragmentActivity implements OnMapReadyCallba
         });
     }
 
-    //method for fetching sharedprefs.
+    //Fetch SharedPreferences
     public void getSharedPrefs() {
         locationKeys.clear();
         locations.clear();
