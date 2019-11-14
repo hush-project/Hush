@@ -22,9 +22,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 import com.google.gson.Gson;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.hushproject.hush.App.CHANNEL_ID1;
@@ -40,7 +38,6 @@ public class ForegroundService extends Service {
 
     private Gson gson = new Gson();
 
-    private String curName;
     private final String startText = "Hush is listening for a location.";
     private double curLat;
     private double curLng;
@@ -56,19 +53,21 @@ public class ForegroundService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        //Create SharedPreferences
+        //SharedPreferences
         locPrefs = getSharedPreferences("LocPrefs", MODE_PRIVATE);
         locationKeys = new ArrayList<>();
         locations = new ArrayList<>();
 
-        //AudioManager declaration.
+        //AudioManager
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
-        //NotificationManager declaration
+        //NotificationManager
         notificationManager = NotificationManagerCompat.from(this);
 
-        //create gps listener and get shared preferences.
+        //create GPS Listener.
         createGPSListener();
+
+        //get SharedPreferences
         getSharedPrefs();
 
         //set up the location manager.
@@ -78,8 +77,7 @@ public class ForegroundService extends Service {
 
         requestLocationUpdate();
 
-        //This is the runnable that allows the service to periodically check the user's location
-        //and change their volume/update their location in the foreground notification.
+        //Runnable for scheduled tasks.
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -98,7 +96,6 @@ public class ForegroundService extends Service {
     //this method runs when MainActivity makes a call to start the service.
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         startForeground();
 
         return START_REDELIVER_INTENT;
@@ -120,7 +117,6 @@ public class ForegroundService extends Service {
     //starts the foreground notification. This is private as we do not want anything but the
     //foreground service being able to start the foreground notification.
     private void startForeground()  {
-
         startForeground(1, foregroundNotification(startText));
     }
 
@@ -213,16 +209,11 @@ public class ForegroundService extends Service {
         }
     }
 
-    /*
-    * This method is the work horse of the foreground service.
-    * It checks the user's location against the area within the radius of the circle.
-    * If the user is within this radius, the app then changes their ringtone and music volumes.
-    * It also updates the foreground notification to display what location they are currently in.
-     */
     public void checkLocation() {
         UserLocations current;
 
         String locObj = "";
+        String curName;
 
         Location currentLocation = new Location(LocationManager.GPS_PROVIDER);
 
@@ -241,19 +232,13 @@ public class ForegroundService extends Service {
                 locObj = locPrefs.getString(locationKeys.get(i), "");
 
             }
-            else {
-
-            }
         }
 
         UserLocations activeLocation = gson.fromJson(locObj, UserLocations.class);
 
         if(!locObj.equalsIgnoreCase("")) {
 
-            Log.d("In", "location: " + activeLocation.getLocationName()
-                    + " "  + activeLocation.getLocationLat() + " "+ activeLocation.getLocationLng());
-
-            curName = "You are in: " + activeLocation.getLocationName();
+            curName = "Current Location: " + activeLocation.getLocationName();
 
             int ringVol = activeLocation.getLocRingVol();
             int mediVol = activeLocation.getLocMediVol();
@@ -292,5 +277,4 @@ public class ForegroundService extends Service {
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, medi, 0);
         }
     }
-
 }

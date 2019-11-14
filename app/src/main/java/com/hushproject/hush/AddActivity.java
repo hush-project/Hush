@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.SeekBar;
@@ -21,7 +20,6 @@ public class AddActivity extends AppCompatActivity
     private EditText locName;
     private TextView locAddress;
 
-    private String name = "";
     private String address = "";
     private double lat = 0.0;
     private double lng = 0.0;
@@ -29,9 +27,7 @@ public class AddActivity extends AppCompatActivity
     private int ringVolume = 0;
     private int mediVolume = 0;
     private static final int SEND_LOCATION_REQUEST = 1;
-    GeocoderService geocoderService = new GeocoderService();
-
-    private AudioManager audioManager;
+    private GeocoderService geocoderService = new GeocoderService();
 
     private Gson gson = new Gson();
 
@@ -46,7 +42,7 @@ public class AddActivity extends AppCompatActivity
         setContentView(R.layout.activity_add);
 
         //AudioManager and Context
-        audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 
         //Get SharedPreferences.
         locPrefs = getSharedPreferences("LocPrefs", MainActivity.MODE_PRIVATE);
@@ -137,7 +133,7 @@ public class AddActivity extends AppCompatActivity
 
     public void saveLoc(View view)
     {
-        name = locName.getText().toString();
+        String name = locName.getText().toString();
 
         if(name.isEmpty()) {
             Toast.makeText(this, "Error: Empty Location Name.",

@@ -14,20 +14,20 @@ import com.google.gson.Gson;
 
 public class EditActivity extends AppCompatActivity
 {
-    private TextView locName;
     private TextView locAddress;
 
     private String name = "";
     private String address = "";
+
     private double lat;
     private double lng;
+
     private int rad;
     private int ringVolume = 0;
     private int mediVolume = 0;
     private static final int SEND_LOCATION_REQUEST = 1;
-    GeocoderService geocoderService = new GeocoderService();
 
-    private AudioManager audioManager;
+    private GeocoderService geocoderService = new GeocoderService();
 
     private Gson gson = new Gson();
 
@@ -39,10 +39,10 @@ public class EditActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
 
-        audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 
         //textfields.
-        locName = findViewById(R.id.locationName);
+        TextView locName = findViewById(R.id.locationName);
         locAddress = findViewById(R.id.address);
 
         //Get SharedPreferences
